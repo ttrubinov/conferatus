@@ -26,15 +26,17 @@ int equal1(float a, float b) {
 }
 
 int main() {
-    //you can change .x values from 0 to 50 and .y values from 36 to 50 (Microphones)
-    Point mic1; mic1.x = 17; mic1.y = 45;
-    Point mic2; mic2.x = 30; mic2.y = 45;
-    Point mic3; mic3.x = 25; mic3.y = 37;
 
-    //you can change .x values from 0 to 50 and .y values from 0 to 34 (Source of sound)
-    Point source; source.x = 29; source.y = 5;
+    //Change this values from 0 to 50:
+    //Microphones
+    Point mic1; mic1.x = 5; mic1.y = 45;
+    Point mic2; mic2.x = 45; mic2.y = 45;
+    Point mic3; mic3.x = 25; mic3.y = 5;
 
-    //you can change .x and .y values from 0 to 50 (Camera)
+    //Source of sound
+    Point source; source.x = 25; source.y = 25;
+
+    //Camera
     Point cam; cam.x = 7; cam.y = 38;
 
 
@@ -56,9 +58,6 @@ int main() {
             }
             else if(equal(i, cam.x) && equal(j, cam.y)) {
                 printf("C ");
-            }
-            else if(equal(j, 35)) {
-                printf("| ");
             }
             else printf(". ");
         }
@@ -114,9 +113,6 @@ int main() {
             }
             else if(equal1(i, m * j + c1)) {
                 printf("* ");
-            }
-            else if(equal(j, 35)) {
-                printf("| ");
             }
             else printf(". ");
         }
