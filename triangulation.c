@@ -25,12 +25,14 @@ int equal1(float a, float b) {
     return (diff < epsilon && (-diff < epsilon));
 }
 
+
+
 int main() {
 
     //Change this values from 0 to 50:
     //Microphones
-    Point mic1; mic1.x = 5; mic1.y = 45;
-    Point mic2; mic2.x = 45; mic2.y = 45;
+    Point mic1; mic1.x = 5; mic1.y = 29;
+    Point mic2; mic2.x = 45; mic2.y = 20;
     Point mic3; mic3.x = 25; mic3.y = 5;
 
     //Source of sound
@@ -74,11 +76,11 @@ int main() {
     float a = dist1, b = dist2, c = dist(mic1, mic2);
     float cosa = (a * a + c * c - b * b) / (2 * a * c);
     float sina = sqrt(1 - cosa * cosa);
-    if(equal(cosa, 0) || equal(sina, 0)) {
+    if(equal1(cosa, 0) || equal1(sina, 0)) {
         printf("AAAAAAAAAAAAAAAAAAAAAAAAA COS = 0 OR SIN = 0 AAAAAAAAAAAAAAAAAAAA"); //microphones and camera must not be at the same line
         return 0;
     }
-    float x = mic1.x + (a / c) * (mic2.x - mic1.x) * cosa - (a / c) * (mic2.y - mic1.y) * sina;
+    float x = mic1.x + (a / c) * (mic2.x - mic1.x) * cosa + (a / c) * (mic2.y - mic1.y) * sina;
     float y = mic1.y + (a / c) * (mic2.y - mic1.y) * cosa - (a / c) * (mic2.x - mic1.x) * sina;
     printf("Source coordinates:\n");
     printf("Answer: x = %f; y = %f\n", source.x, source.y);
