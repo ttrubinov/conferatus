@@ -8,6 +8,18 @@ typedef struct point {
     float x, y;
 } Point;
 
+Point add(Point a, Point b) {
+    return (Point) {a.x + b.x, a.y + b.y};
+}
+
+Point mult(Point a, float b) {
+    return (Point) {a.x * b, a.y * b};
+}
+
+void printPoint(Point a) {
+    printf("%f %f\n", a.x, a.y);
+}
+
 typedef struct circle {
     Point o;
     float rad;
@@ -16,6 +28,13 @@ typedef struct circle {
 typedef struct line {
     float a, b, c;
 } Line;
+
+int compare (const void * a, const void * b)
+{
+  float fa = *(const float*) a;
+  float fb = *(const float*) b;
+  return (fa > fb) - (fa < fb);
+}
 
 float distance(Point a, Point b) {
     return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y)* (b.y - a.y));
@@ -34,7 +53,7 @@ int equalE(float a, float b, float epsilon) {
 
 float getValue(Point a, Point b) {
     float k = 10000 + (float)rand() / RAND_MAX * 300;
-    return k / (distance(a, b) * distance(a, b)) + (float)rand() / RAND_MAX * 0.3;
+    return k / (distance(a, b) * distance(a, b)) + ((float)rand() / RAND_MAX -0.5) * 2;
 }
 
 Circle calcCircle(Point s0, Point s1, float k) {
@@ -50,7 +69,28 @@ Circle calcCircle(Point s0, Point s1, float k) {
 }
 
 Point circleIntersection(Circle c1, Circle c2) {
-
+    float x2 = c2.o.x - c1.o.x, y2 = c2.o.y - c1.o.y;
+    float a = -2 * x2, b = -2 * y2, c = x2 * x2 + y2 * y2 + c1.rad - c2.rad, r = c1.rad;
+    float a2b2 = a * a + b * b;
+    float x0 = -a * c / (a2b2),  y0 = -b * c / (a2b2);
+    if(c * c > r * (a2b2) + 0.5)
+        return (Point) {-100, -100};
+    else if(abs(c * c - r * (a2b2)) < 0.5) {
+        return (Point) {x0 + c1.o.x, y0 + c1.o.y};
+    }
+    else {
+        float d = r - c * c / (a2b2);
+        float mult = sqrt(d / (a2b2));
+        float ax, ay, bx, by;
+        ax = x0 + b * mult;
+        bx = x0 - b * mult;
+        ay = y0 - a * mult;
+        by = y0 + a * mult;
+        if(ay > by)
+            return (Point) {ax + c1.o.x, ay + c1.o.y};
+        else
+            return (Point) {bx + c1.o.x, by + c1.o.y};
+    }
 }
 
 int pointOnLine(Point p, Line l) {
@@ -82,35 +122,100 @@ Point triangulation(Point a, Point b, Point c, float sa, float sb, float sc) {
 
 int main() {
     srand(time(NULL));
-    Point mic1 = {5, 5};
-    Point mic2 = {6, 4};
-    Point mic3 = {7, 4};
-    Point mic4 = {8, 5};
-    Point source; source.x = 15; source.y = 45;
+    Point mic1 = {27, 6};
+    Point mic2 = {25, 4};
+    Point mic3 = {29, 4};
+    Point mic4 = {31, 6};
+    Point source; source.x = 25; source.y = 30;
     float avg1 = 0, avg2 = 0, avg3 = 0, avg4 = 0;
     int n = 20;
+    float avg1Arr[n], avg2Arr[n], avg3Arr[n], avg4Arr[n];
     for(int i = 0; i < n; i++) {
+        /*for(int j = 0; j < 3; j++) {
+            avg1Arr[j] = getValue(source, mic1);
+            avg2Arr[j] = getValue(source, mic2);
+            avg3Arr[j] = getValue(source, mic3);
+            avg4Arr[j] = getValue(source, mic4);
+        }
+        qsort(avg1Arr, 3, sizeof(float), compare);
+        avg1 += avg1Arr[1];
+        qsort(avg2Arr, 3, sizeof(float), compare);
+        avg2 += avg2Arr[1];
+        qsort(avg3Arr, 3, sizeof(float), compare);
+        avg3 += avg3Arr[1];
+        qsort(avg4Arr, 3, sizeof(float), compare);
+        avg4 += avg4Arr[1];*/
         avg1 += getValue(source, mic1);
         avg2 += getValue(source, mic2);
         avg3 += getValue(source, mic3);
         avg4 += getValue(source, mic4);
     }
+    /*qsort(avg1Arr, 20, sizeof(float), compare);
+    qsort(avg2Arr, 20, sizeof(float), compare);
+    qsort(avg3Arr, 20, sizeof(float), compare);
+    qsort(avg4Arr, 20, sizeof(float), compare); */
     avg1 /= n;
     avg2 /= n;
     avg3 /= n;
     avg4 /= n;
+    //float mic1Sound = avg1Arr[10], mic2Sound = avg2Arr[10], mic3Sound = avg3Arr[10], mic4Sound = avg4Arr[10];
     float mic1Sound = avg1, mic2Sound = avg2, mic3Sound = avg3, mic4Sound = avg4;
     //float mic1Sound = getValue(source, mic1), mic2Sound = getValue(source, mic2), mic3Sound = getValue(source, mic3), mic4Sound = getValue(source, mic4);
     Line line = midperpendicular(mic1, mic2);
     Circle circ1 = calcCircle(mic1, mic2, sqrt(mic1Sound / mic2Sound));
     Circle circ2 = calcCircle(mic2, mic3, sqrt(mic2Sound / mic3Sound));
     Circle circ3 = calcCircle(mic3, mic4, sqrt(mic3Sound / mic4Sound));
+    //
+    float cnt = 0;
+    Point circ12 = circleIntersection(circ1, circ2);
+    if(circ12.x > -20.0 && circ12.x < 100 && circ12.y < 100) cnt++;
+    else {
+        printf("circ12 no points, x = %f, y = %f\n", circ12.x, circ12.y);
+        circ12 = mult(circ12, 0.0);
+    }
+    Point circ23 = circleIntersection(circ2, circ3);
+    if(circ23.x > -20.0 && circ23.x < 100 && circ23.y < 100) cnt++;
+    else {
+        printf("circ23 no points, x = %f, y = %f\n", circ23.x, circ23.y);
+        circ23 = mult(circ23, 0.0);
+    }
+    Point circ13 = circleIntersection(circ1, circ3);
+    if(circ13.x > -20.0 && circ13.x < 100 && circ13.y < 100) cnt++;
+    else {
+        printf("circ13 no points, x = %f, y = %f\n", circ13.x, circ13.y);
+        circ13 = mult(circ13, 0.0);
+    }
+    Point mySource;
+    if(cnt == 3) {
+        //Point t1 = mult(add(circ12, circ23), 1/2);
+        //Point t2 = mult(add(circ23, circ13), 1/2);
+        //Point t3 = mult(add(circ12, circ13), 1/2);
+        Point p1 = circ23;
+        Point p2 = circ13;
+        Point p3 = circ12;
+        float d1 = distance(p2, p3);
+        float d2 = distance(p1, p3);
+        float d3 = distance(p1, p2);
+        float k1 = 1 / d1, k2 = 1 / d2, k3 = 1 / d3;
+        mySource = (Point) {((k2 + k3) * p1.x + (k1 + k3) * p2.x + (k1 + k2) * p3.x) / (2 * (k1 + k2 + k3)),
+                            ((k2 + k3) * p1.y + (k1 + k3) * p2.y + (k1 + k2) * p3.y) / (2 * (k1 + k2 + k3))};
+    }
+    else {
+        mySource = mult(add(add(circ12, circ23), circ13), (1.0 / cnt));
+    }
+    printPoint(circ12);
+    printPoint(circ23);
+    printPoint(circ13);
+    printf("%f %f\n", mySource.x, mySource.y);
     for(float j1 = 100; j1 >= 0; j1--) {
         float j = j1 / 2;
         for(float i = 0; i <= 50; i++) {
-            char str[5] = {' ', '.', ' ', ' ', 0};
+            char str[5] = {' ', ' ', ' ', ' ', 0};
             if(equal(i, source.x) && equal(j, source.y)) {
-                str[0] = 'S';
+                str[3] = 'S';
+            }
+            if(equalE(i, mySource.x, 0.5) && equalE(j, mySource.y, 0.5)) {
+                str[0] = '&';
             }
             if(equal(i, mic1.x) && equal(j, mic1.y)) {
                 str[1] = '1';
@@ -125,19 +230,24 @@ int main() {
                 str[1] = '4';
             }
             if(pointOnCircle((Point) {i, j}, circ1)) {
-                str[3] = 'o';
+                str[2] = '0';
             }
             if(pointOnCircle((Point) {i, j}, circ2)) {
-                str[2] = 'O';
+                str[2] = 'o';
             }
             if(pointOnCircle((Point) {i, j}, circ3)) {
-                str[2] = '0';
+                str[2] = 'O';
+            }
+            if(i == 0 || j == 0 || i == 50 || j == 50) {
+                str[1] = '.';
             }
             printf("%s", str);
         }
         printf("\n");
     }
     printf("\n");
-    printf("%f %f %f\n", 11.0, 30.0, 40.0);
-    printf("%f %f %f %f", mic1Sound, mic2Sound, mic3Sound, mic4Sound);
+    printf("%f %f %f %f\n", mic1Sound, mic2Sound, mic3Sound, mic4Sound);
+    printf("o.x = %f o.y = %f o.r = %f\n", circ1.o.x, circ1.o.y, circ1.rad);
+    printf("o.x = %f o.y = %f o.r = %f\n", circ2.o.x, circ2.o.y, circ2.rad);
+    printf("o.x = %f o.y = %f o.r = %f\n", circ3.o.x, circ3.o.y, circ3.rad);
 }
