@@ -49,6 +49,7 @@ void loop() {
         middle_c = (c1 < c2) ? ((c2 < c3) ? c2: ((c3 < c1) ? c1: c3)): ((c1 < c3) ? c1: ((c3 < c2) ? c2: c3));
         sum_c += c3;
     }
+    // make inlined function
     
     sum_a = sum_a/2;
     avexp_a += (sum_a - avexp_a) >>3;

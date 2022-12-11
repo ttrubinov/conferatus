@@ -12,12 +12,6 @@ static int a1, a4, a7;
 
 static int a1f = 0, a4f = 0, a7f = 0;
 
-//inline void expRunningAverage() {
-//  A1f += (A1 - A1f) / 5;
-//  A4f += (A4 - A4f) / 5;
-//  a7f += (a7 - a7f) / 5;
-//}
-
 void setup() {
     clearSfrBit(ADCSRA,ADPS2);
     clearSfrBit(ADCSRA,ADPS1);

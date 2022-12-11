@@ -1,3 +1,6 @@
+// код не наш извините...
+// взято исключительно для тестов
+
 #define MIC_PIN_0 A1
 #define MIC_PIN_1 A4
 #define MIC_PIN_2 A7
