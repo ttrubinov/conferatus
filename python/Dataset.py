@@ -1,6 +1,5 @@
 import json
 import pathlib
-from types import SimpleNamespace
 
 
 class Sample:

@@ -45,5 +45,6 @@ class ArduinoController:
         }
 
 
-with ArduinoController(3, 230400, 1) as controller:
-    print(controller.recordSample(45))
+if __name__ == '__main__':
+    with ArduinoController(3, 230400, 1) as controller:
+        print(controller.recordSample(45))
