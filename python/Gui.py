@@ -25,11 +25,13 @@ class SettingsPresenter:
 
     def startReadingSignal(self):
         self.__settingsWindowView__.applyButton.setEnabled(False)
+        self.__settingsWindowView__.statusbar.showMessage("Recording...")
         self.__settingsModel__.readSamples(self.__settingsWindowView__.getUserDefinedParameters())
 
     def finishedReadingSignal(self):
-        self.__settingsWindowView__.applyButton.setEnabled(True)
         self.__settingsWindowView__.showBadDataDialog()
+        self.__settingsWindowView__.applyButton.setEnabled(True)
+        self.__settingsWindowView__.statusbar.showMessage("Inactive")
 
 
 
@@ -48,35 +50,43 @@ class SettingsWindowView(QtWidgets.QMainWindow):
 
         self.refreshButton = self.findChild(QtWidgets.QPushButton, 'refreshButton')
         self.refreshButton.clicked.connect(self.__refreshPorts__) 
+        self.__refreshPorts__()
 
         self.applyButton = self.findChild(QtWidgets.QPushButton, 'applyButton')
         self.applyButton.clicked.connect(self.__applyButtonPressed__) 
 
+        self.statusbar = self.findChild(QtWidgets.QStatusBar, 'statusbar')
+        self.statusbar.showMessage("Inactive")
+
     def __init__(self, settingsPresenter : SettingsPresenter):
         super(SettingsWindowView, self).__init__()
         uic.loadUi('ui/settingsWindow.ui', self)
+        self.__settingsPresenter__ = settingsPresenter
 
         self.__init_widgets__()
-        self.__refreshPorts__()
-        self.__settingsPresenter__ = settingsPresenter
 
         self.show()
 
     def __refreshPorts__(self):
         self.portComboBox.clear()
-        ports = list(serial.tools.list_ports.comports())
-        for p in ports:
-            self.portComboBox.addItem(p.device)
+        portList = list(serial.tools.list_ports.comports())
+        for port in portList:
+            self.portComboBox.addItem(port.device)
 
+        if portList:
+            self.applyButton.setEnabled(True)
+        else:
+            self.applyButton.setEnabled(False)
 
     def __applyButtonPressed__(self):
+        self.__refreshPorts__()
         self.__settingsPresenter__.startReadingSignal()
 
     def showBadDataDialog(self):
         print('a')
 
     def getUserDefinedParameters(self) -> UserDefinedParameters:
-        port = self.portLineEdit.text()
+        port = self.portComboBox.currentText()
         filename = self.filenameLineEdit.text()
         person = self.personLineEdit.text()
 
@@ -103,12 +113,7 @@ class SettingsModel:
         self.__settingsPresenter__.finishedReadingSignal()
 
 
-
 def main():
-    ports = list(serial.tools.list_ports.comports())
-    for p in ports:
-        print(p.device)
-
     app = QtWidgets.QApplication(sys.argv)
 
     presenter = SettingsPresenter()
@@ -119,6 +124,7 @@ def main():
     presenter.setSettingsWindowsView(window)
 
     app.exec()
+
 
 if __name__ == '__main__':
     main()
