@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from PyQt6 import QtWidgets, uic
 import sys
+import serial.tools.list_ports
 
 from Arduino import ArduinoController
 
@@ -28,6 +29,7 @@ class SettingsPresenter:
 
     def finishedReadingSignal(self):
         self.__settingsWindowView__.applyButton.setEnabled(True)
+        self.__settingsWindowView__.showBadDataDialog()
 
 
 
@@ -35,13 +37,17 @@ class SettingsWindowView(QtWidgets.QMainWindow):
     __settingsPresenter__ : SettingsPresenter
 
     def __init_widgets__(self):
-        self.portLineEdit = self.findChild(QtWidgets.QLineEdit, 'portLineEdit')
         self.filenameLineEdit = self.findChild(QtWidgets.QLineEdit, 'filenameLineEdit')
         self.personLineEdit = self.findChild(QtWidgets.QLineEdit, 'personLineEdit')
 
         self.frequencySpinBox = self.findChild(QtWidgets.QSpinBox, 'frequencySpinBox')
         self.batchSizeSpinBox = self.findChild(QtWidgets.QSpinBox, 'batchSizeSpinBox')
         self.angleSpinBox = self.findChild(QtWidgets.QSpinBox, 'angleSpinBox')
+
+        self.portComboBox = self.findChild(QtWidgets.QComboBox, 'portComboBox')
+
+        self.refreshButton = self.findChild(QtWidgets.QPushButton, 'refreshButton')
+        self.refreshButton.clicked.connect(self.__refreshPorts__) 
 
         self.applyButton = self.findChild(QtWidgets.QPushButton, 'applyButton')
         self.applyButton.clicked.connect(self.__applyButtonPressed__) 
@@ -51,12 +57,23 @@ class SettingsWindowView(QtWidgets.QMainWindow):
         uic.loadUi('ui/settingsWindow.ui', self)
 
         self.__init_widgets__()
+        self.__refreshPorts__()
         self.__settingsPresenter__ = settingsPresenter
 
         self.show()
 
+    def __refreshPorts__(self):
+        self.portComboBox.clear()
+        ports = list(serial.tools.list_ports.comports())
+        for p in ports:
+            self.portComboBox.addItem(p.device)
+
+
     def __applyButtonPressed__(self):
         self.__settingsPresenter__.startReadingSignal()
+
+    def showBadDataDialog(self):
+        print('a')
 
     def getUserDefinedParameters(self) -> UserDefinedParameters:
         port = self.portLineEdit.text()
@@ -88,6 +105,10 @@ class SettingsModel:
 
 
 def main():
+    ports = list(serial.tools.list_ports.comports())
+    for p in ports:
+        print(p.device)
+
     app = QtWidgets.QApplication(sys.argv)
 
     presenter = SettingsPresenter()
