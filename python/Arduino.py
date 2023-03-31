@@ -18,7 +18,7 @@ class ArduinoController:
     def __exit__(self):
         self.serial.close()
 
-    def recordData(self, batch_size: int = None, port: str = None):
+    def recordData(self, batch_size: int = None, port: str = None) -> list[list[float]]:
         if batch_size is None:
             batch_size = self.batch_size
         if port is not None:
