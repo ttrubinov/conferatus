@@ -94,7 +94,7 @@
      <number>200</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="recordingSpinBox">
+   <widget class="QSpinBox" name="batchSizeSpinBox">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -193,7 +193,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="personNameLabel">
+   <widget class="QLabel" name="personLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -206,7 +206,7 @@
      <string>Person name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="personNameLineEdit">
+   <widget class="QLineEdit" name="personLineEdit">
     <property name="geometry">
      <rect>
       <x>100</x>
