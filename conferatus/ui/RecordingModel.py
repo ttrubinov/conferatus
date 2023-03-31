@@ -1,8 +1,8 @@
 
 
-from python.Arduino import ArduinoController
-from python.ui.RecordingPresenter import RecordingPresenter
-from python.ui.UserDefinedParamerers import UserDefinedParameters
+from raytracing.Arduino import ArduinoController
+from ui.RecordingPresenter import RecordingPresenter
+from ui.UserDefinedParamerers import UserDefinedParameters
 
 
 class RecordingModel:

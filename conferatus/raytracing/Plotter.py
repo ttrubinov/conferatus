@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from conferatus.python.Fourier import Fourier
+from raytracing.Fourier import Fourier
 
 
 class Plotter:

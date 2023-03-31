@@ -1,9 +1,9 @@
 from PyQt6 import QtWidgets, uic
 
-from python.ui.RecordingPresenter import RecordingPresenter
+from ui.RecordingPresenter import RecordingPresenter
 import serial.tools.list_ports
 
-from python.ui.UserDefinedParamerers import UserDefinedParameters
+from ui.UserDefinedParamerers import UserDefinedParameters
 
 class SettingsWindowView(QtWidgets.QMainWindow):
     def __init_widgets__(self):
