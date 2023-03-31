@@ -9,19 +9,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>196</height>
+    <width>497</width>
+    <height>156</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>кладбище</string>
+   <string>conferatus</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../Screenshot from 2022-11-15 21-38-03.png</normaloff>../../../../Screenshot from 2022-11-15 21-38-03.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="portLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>240</x>
+      <y>40</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -33,8 +37,8 @@
    <widget class="QLabel" name="frequencyLabel">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>60</y>
+      <x>10</x>
+      <y>40</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -46,8 +50,8 @@
    <widget class="QLabel" name="batchSizeLabel">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>90</y>
+      <x>10</x>
+      <y>70</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -59,8 +63,8 @@
    <widget class="QPushButton" name="applyButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>140</y>
+      <x>410</x>
+      <y>100</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -72,8 +76,8 @@
    <widget class="QSpinBox" name="frequencySpinBox">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>60</y>
+      <x>100</x>
+      <y>40</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -97,8 +101,8 @@
    <widget class="QSpinBox" name="batchSizeSpinBox">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>90</y>
+      <x>100</x>
+      <y>70</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -116,37 +120,11 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLineEdit" name="portLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>10</y>
-      <width>101</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="maxLength">
-     <number>255</number>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>411</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
    <widget class="QLabel" name="angleLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>10</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -159,7 +137,7 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>60</y>
+      <y>10</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -180,24 +158,11 @@
      <number>90</number>
     </property>
    </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>120</y>
-      <width>411</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
    <widget class="QLabel" name="personLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
+      <y>100</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -210,7 +175,7 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>90</y>
+      <y>100</y>
       <width>101</width>
       <height>24</height>
      </rect>
@@ -225,8 +190,8 @@
    <widget class="QLabel" name="filenameLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>140</y>
+      <x>240</x>
+      <y>10</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -238,9 +203,9 @@
    <widget class="QLineEdit" name="filenameLineEdit">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>140</y>
-      <width>101</width>
+      <x>300</x>
+      <y>10</y>
+      <width>191</width>
       <height>24</height>
      </rect>
     </property>
@@ -251,10 +216,46 @@
      <number>255</number>
     </property>
    </widget>
+   <widget class="QComboBox" name="portComboBox">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>40</y>
+      <width>131</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refreshButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>40</y>
+      <width>51</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>20</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
