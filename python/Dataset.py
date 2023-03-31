@@ -93,5 +93,6 @@ class Dataset:
 
 if __name__ == '__main__':
     dt = Dataset()
-    dt.addData([Sample(signals=[[1], [1], [1]], angle=0, bad_data=False, frequency=500, person=None)])
+    dt.saveData(arr=[Sample(signals=[[1], [1], [1]], angle=0, bad_data=False, frequency=500, person=None)],
+                sync=True)
     print(dt.getSampleData())
