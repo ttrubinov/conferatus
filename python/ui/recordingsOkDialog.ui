@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Recording ended</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.png</normaloff>icon.png</iconset>
+  </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
@@ -39,7 +43,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Are recorded samples fine?</string>
+    <string>Is recorded sample fine?</string>
    </property>
   </widget>
  </widget>
