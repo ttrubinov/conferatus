@@ -13,11 +13,10 @@ class RecordingThread(QtCore.QThread):
         self.__params__ = params
         
     def run(self):
-        # with ArduinoController(batch_size = self.__params__.batchSize, port = self.__params__.port) as arduinoController:
-        #     data = arduinoController.recordData()
+        with ArduinoController(batch_size = self.__params__.batchSize, port = self.__params__.port) as arduinoController:
+            data = arduinoController.recordData()
 
         for i in range(0, self.__params__.batchSize):
-            2+2
             # open plotter
             print(self.__settingsPresenter__.processSampleDialog())
 
