@@ -4,23 +4,25 @@ import serial
 
 
 class ArduinoController:
-    def __init__(self, com_port, baud_rate, sample_size, data_size=250):
+    def __init__(self, batch_size: int, baud_rate=230400, port: str = f"COM3", data_size=250):
         self.data_size = data_size
-        self.sample_size = sample_size
-        self.com_port = f"COM{com_port}"
+        self.batch_size = batch_size
+        self.port = port
         self.baud_rate = baud_rate
         self.serial = None
 
     def __enter__(self):
-        self.serial = serial.Serial(self.com_port, self.baud_rate, timeout=2)
+        self.serial = serial.Serial(self.port, self.baud_rate, timeout=2)
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self):
         self.serial.close()
 
-    def recordData(self, batch_size=None):
+    def recordData(self, batch_size: int = None, port: str = None):
         if batch_size is None:
-            batch_size = self.sample_size
+            batch_size = self.batch_size
+        if port is not None:
+            self.serial = serial.Serial(port, self.baud_rate, timeout=2)
         arr = []
         ser = self.serial
         print("started")
@@ -46,5 +48,5 @@ class ArduinoController:
 
 
 if __name__ == '__main__':
-    with ArduinoController(3, 230400, 1) as controller:
-        print(controller.recordSamples())
+    with ArduinoController(3, baud_rate=230400, port="COM", port_number=3) as controller:
+        print(controller.recordData())
