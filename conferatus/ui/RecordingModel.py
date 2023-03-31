@@ -3,25 +3,33 @@
 from raytracing.Arduino import ArduinoController
 from ui.RecordingPresenter import RecordingPresenter
 from ui.UserDefinedParamerers import UserDefinedParameters
+from PyQt6 import QtCore
+
+
+class RecordingThread(QtCore.QThread):
+    def __init__(self, settingsPresenter, params : UserDefinedParameters, parent=None):
+        super(RecordingThread, self).__init__(parent)
+        self.__settingsPresenter__ = settingsPresenter
+        self.__params__ = params
+        
+    def run(self):
+        # with ArduinoController(batch_size = self.__params__.batchSize, port = self.__params__.port) as arduinoController:
+        #     data = arduinoController.recordData()
+
+        for i in range(0, self.__params__.batchSize):
+            2+2
+            # open plotter
+            print(self.__settingsPresenter__.processSampleDialog())
 
 
 class RecordingModel:
     def __init__(self, settingsPresenter : RecordingPresenter):
         self.__settingsPresenter__ = settingsPresenter
 
-    def readSamples(self, userDefinedParameters : UserDefinedParameters):
-        params = userDefinedParameters
+    def readSamples(self, params : UserDefinedParameters):
         print(params)
 
-        with ArduinoController(batch_size = params.batchSize, port = params.port) as arduinoController:
-            data = arduinoController.recordData()
-            # todo qthread
+        self.thread = RecordingThread(self.__settingsPresenter__, params)
+        self.thread.finished.connect(self.__settingsPresenter__.finishedReadingSamples)
 
-
-        for i in range(0, params.batchSize):
-            # open plotter
-            print(self.__settingsPresenter__.processSampleDialog())
-
-        
-
-        self.__settingsPresenter__.finishedReadingSamples()
+        self.thread.start()
