@@ -49,5 +49,5 @@ class ArduinoController:
 
 
 if __name__ == '__main__':
-    with ArduinoController(3, baud_rate=230400, port="COM", port_number=3) as controller:
+    with ArduinoController(3, baud_rate=230400, port="COM3") as controller:
         print(controller.recordData())
