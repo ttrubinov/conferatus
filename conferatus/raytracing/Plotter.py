@@ -4,33 +4,33 @@ from conferatus.conferatus.raytracing.Fourier import Fourier
 
 
 class Plotter:
-    def draw(self, arrY: list[list[float]], arrX: list[float] = None, color: list[str] = None, name: list[str] = None,
-             xlim: int = None, legend: str = None):
+    @staticmethod
+    def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: list[str] = None,
+             x_lim: int = None, legend: str = None):
         def show(plotTitle: str = ""):
             plt.title(plotTitle)
-            if xlim is not None:
-                plt.xlim(0, xlim)
+            if x_lim is not None:
+                plt.xlim(0, x_lim)
             if legend is not None:
                 plt.legend(legend)
             plt.grid()
             plt.show()
             plt.clf()
 
-        def arr_filling():
-            if arrX is None:
-                n = len(arrY)
-                fourier = Fourier(arrY)
-                return fourier.fft_freq()[1:n // 2]
+        def x_axis_filling():
+            if x_axis is None:
+                n = len(y_axis)
+                return Fourier.fft_freq(y_axis)[1:n // 2]
             else:
-                return arrX
+                return x_axis
 
-        if color is not None and name is not None and len(arrY) == len(color) == len(name):
-            for data, clr, title in zip(arrY, color, name):
-                arrX = arr_filling()
-                plt.plot(arrX, data, color=clr)
+        if color is not None and name is not None and len(y_axis) == len(color) == len(name):
+            for data, clr, title in zip(y_axis, color, name):
+                x_axis = x_axis_filling()
+                plt.plot(x_axis, data, color=clr)
                 show(title)
         else:
-            for data in arrY:
-                arrX = arr_filling()
-                plt.plot(arrX, data, color="b")
+            for data in y_axis:
+                x_axis = x_axis_filling()
+                plt.plot(x_axis, data, color="b")
                 show()
