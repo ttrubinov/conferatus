@@ -7,8 +7,7 @@ class Fourier:
         self.array = array
 
     def fft(self):
-        return list(map(lambda x: fft(np.array(x)), self.array))
+        return list(map(lambda data: fft(np.array(data)), self.array))
 
     def fft_freq(self, sampleSpacing=1 / 12000):
-        n = len(self.array)
-        return fftfreq(n, sampleSpacing)[:n // 2]
+        return list(map(lambda data: fftfreq(len(data), sampleSpacing)[:len(data) // 2], self.array))
