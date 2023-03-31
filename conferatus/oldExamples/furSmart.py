@@ -4,7 +4,7 @@ from scipy.fft import fft, fftfreq
 
 T = 1 / 12000
 data = [[], [], []]
-with open("waiting505.txt", mode="r") as f:
+with open("samples/waiting505.txt", mode="r") as f:
     s = f.readline()
     nn = 250
     counter = 0
