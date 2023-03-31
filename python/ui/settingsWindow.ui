@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../Screenshot from 2022-11-15 21-38-03.png</normaloff>../../../../Screenshot from 2022-11-15 21-38-03.png</iconset>
+    <normaloff>icon.png</normaloff>icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="portLabel">
