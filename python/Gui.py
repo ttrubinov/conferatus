@@ -17,46 +17,45 @@ class UserDefinedParameters:
 
 
 class SettingsPresenter:
-    def setSettingsWindowsView(self, settingsWindowView):
+    def setSettingsWindowView(self, settingsWindowView):
         self.__settingsWindowView__ = settingsWindowView
 
     def setSettingsModel(self, settingsModel):
         self.__settingsModel__ = settingsModel
 
-    def startReadingSignal(self):
+    def setFineDialogView(self, fineDialogView):
+        self.__fineDialogView__ = fineDialogView
+
+    def startReadingSamples(self):
         self.__settingsWindowView__.applyButton.setEnabled(False)
         self.__settingsWindowView__.statusbar.showMessage("Recording...")
         self.__settingsModel__.readSamples(self.__settingsWindowView__.getUserDefinedParameters())
 
-    def finishedReadingSignal(self):
-        self.__settingsWindowView__.showBadDataDialog()
+    def processSampleDialog(self) -> bool:
+        return self.__fineDialogView__.exec()
+    
+    def finishedReadingSamples(self):
         self.__settingsWindowView__.applyButton.setEnabled(True)
         self.__settingsWindowView__.statusbar.showMessage("Inactive")
 
 
+class QuestionDialogView(QtWidgets.QDialog):
+    def __init__(self):
+        super(QuestionDialogView, self).__init__()
+        uic.loadUi('ui/recordingsOkDialog.ui', self)
+
 
 class SettingsWindowView(QtWidgets.QMainWindow):
-    __settingsPresenter__ : SettingsPresenter
-
     def __init_widgets__(self):
         self.filenameLineEdit = self.findChild(QtWidgets.QLineEdit, 'filenameLineEdit')
         self.personLineEdit = self.findChild(QtWidgets.QLineEdit, 'personLineEdit')
-
         self.frequencySpinBox = self.findChild(QtWidgets.QSpinBox, 'frequencySpinBox')
         self.batchSizeSpinBox = self.findChild(QtWidgets.QSpinBox, 'batchSizeSpinBox')
         self.angleSpinBox = self.findChild(QtWidgets.QSpinBox, 'angleSpinBox')
-
         self.portComboBox = self.findChild(QtWidgets.QComboBox, 'portComboBox')
-
         self.refreshButton = self.findChild(QtWidgets.QPushButton, 'refreshButton')
-        self.refreshButton.clicked.connect(self.__refreshPorts__) 
-        self.__refreshPorts__()
-
         self.applyButton = self.findChild(QtWidgets.QPushButton, 'applyButton')
-        self.applyButton.clicked.connect(self.__applyButtonPressed__) 
-
         self.statusbar = self.findChild(QtWidgets.QStatusBar, 'statusbar')
-        self.statusbar.showMessage("Inactive")
 
     def __init__(self, settingsPresenter : SettingsPresenter):
         super(SettingsWindowView, self).__init__()
@@ -64,26 +63,30 @@ class SettingsWindowView(QtWidgets.QMainWindow):
         self.__settingsPresenter__ = settingsPresenter
 
         self.__init_widgets__()
+        self.__refreshPorts__()
+
+        self.refreshButton.clicked.connect(self.__refreshPorts__) 
+        self.applyButton.clicked.connect(self.__applyButtonPressed__) 
+        self.statusbar.showMessage("Inactive")
 
         self.show()
 
     def __refreshPorts__(self):
         self.portComboBox.clear()
         portList = list(serial.tools.list_ports.comports())
-        for port in portList:
-            self.portComboBox.addItem(port.device)
 
         if portList:
             self.applyButton.setEnabled(True)
+            for port in portList:
+                self.portComboBox.addItem(port.device)
         else:
             self.applyButton.setEnabled(False)
+        
 
     def __applyButtonPressed__(self):
         self.__refreshPorts__()
-        self.__settingsPresenter__.startReadingSignal()
+        self.__settingsPresenter__.startReadingSamples()
 
-    def showBadDataDialog(self):
-        print('a')
 
     def getUserDefinedParameters(self) -> UserDefinedParameters:
         port = self.portComboBox.currentText()
@@ -97,8 +100,6 @@ class SettingsWindowView(QtWidgets.QMainWindow):
         return UserDefinedParameters(port, filename, person, frequency, batchSize, angle)
 
 
-
-
 class SettingsModel:
     def __init__(self, settingsPresenter : SettingsPresenter):
         self.__settingsPresenter__ = settingsPresenter
@@ -108,9 +109,15 @@ class SettingsModel:
         print(params)
 
         # arduinoController = ArduinoController(batch_size = params.batchSize, port = params.port)
-        # arduinoController.recordData()
+        # data = arduinoController.recordData()
 
-        self.__settingsPresenter__.finishedReadingSignal()
+        for i in range(0, params.batchSize):
+            # open plotter
+            print(self.__settingsPresenter__.processSampleDialog())
+
+        self.__settingsPresenter__.finishedReadingSamples()
+
+    
 
 
 def main():
@@ -119,9 +126,12 @@ def main():
     presenter = SettingsPresenter()
     window = SettingsWindowView(presenter)
     model = SettingsModel(presenter)
+    dialog = QuestionDialogView()
+
 
     presenter.setSettingsModel(model)
-    presenter.setSettingsWindowsView(window)
+    presenter.setSettingsWindowView(window)
+    presenter.setFineDialogView(dialog)
 
     app.exec()
 

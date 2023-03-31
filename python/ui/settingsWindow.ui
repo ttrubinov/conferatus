@@ -257,6 +257,9 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
   </widget>
  </widget>
  <resources/>
