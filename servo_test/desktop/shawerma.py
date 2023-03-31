@@ -16,16 +16,16 @@ def main():
 
     while True:
         try:
-            rotation_angle = int(input())
+            rotationAngle = int(input())
         except ValueError:
             logging.error('не цифорка')
             continue
 
-        if not 0 <= rotation_angle <= 180:
+        if not 0 <= rotationAngle <= 180:
             logging.error('фаза это ноль')
             continue
         
-        ser.write(rotation_angle.to_bytes(1, 'little'))
+        ser.write((180 - rotationAngle).to_bytes(1, 'little'))
 
 if __name__ == '__main__':
     main()
