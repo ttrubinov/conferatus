@@ -22,6 +22,7 @@ class ArduinoController:
         if batch_size is None:
             batch_size = self.batch_size
         if port is not None:
+            self.serial.close()
             self.serial = serial.Serial(port, self.baud_rate, timeout=2)
         arr = []
         ser = self.serial
