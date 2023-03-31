@@ -18,13 +18,16 @@ class ArduinoController:
     def __exit__(self, type, value, traceback):
         self.serial.close()
 
-    def recordSample(self, angle):
+    def recordData(self, batch_size=None):
+        if batch_size is None:
+            batch_size = self.sample_size
         arr = []
         ser = self.serial
         print("started")
-        for i in range(0, self.sample_size):
+        for i in range(0, batch_size):
             ser.write(b'c\n')
-            while not ("S" in ser.readline().decode()):
+            while not ("S" in (a := ser.readline().decode())):
+                print(a)
                 time.sleep(1)
                 ser.write(b'c')
                 print("Waiting")
@@ -39,12 +42,9 @@ class ArduinoController:
             line = map(float, line.decode().strip().split())
             for index, value in enumerate(line):
                 answer[index].append(value)
-        return {
-            "angle": angle,
-            "signals": answer
-        }
+        return answer
 
 
 if __name__ == '__main__':
     with ArduinoController(3, 230400, 1) as controller:
-        print(controller.recordSample(45))
+        print(controller.recordSamples())
