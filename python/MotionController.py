@@ -1,5 +1,5 @@
 class MotionController:
-    def __init__(self, start_angle: float = 0, coefficient: float = 1):
+    def __init__(self, start_angle: float = 0, coefficient: float = 0.5):
         self.angle = start_angle
         self.coefficient = coefficient
 
