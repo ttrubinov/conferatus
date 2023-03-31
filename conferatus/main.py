@@ -2,10 +2,10 @@ import asyncio
 from PyQt6 import QtCore, QtWidgets, uic
 import sys
 
-from python.ui.QuestionDialogView import QuestionDialogView
-from python.ui.RecordingModel import RecordingModel
-from python.ui.RecordingPresenter import RecordingPresenter
-from python.ui.SettingsWindowView import SettingsWindowView
+from ui.QuestionDialogView import QuestionDialogView
+from ui.RecordingModel import RecordingModel
+from ui.RecordingPresenter import RecordingPresenter
+from ui.SettingsWindowView import SettingsWindowView
 
 
 def main():
