@@ -1,7 +1,7 @@
 class MotionController:
     def __init__(self, angle: float = 0):
         self.angle = angle
-        self.prev_angles = [0.0]
+        self.prev_angles = [angle]
 
     def get_new_rotation_angle(self, new_angle: float) -> float:
         if len(self.prev_angles) > 9:
