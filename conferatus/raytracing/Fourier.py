@@ -3,11 +3,18 @@ from scipy.fft import fft, fftfreq
 
 
 class Fourier:
-    def __init__(self, array: list[list[float]]):
-        self.array = array
+    @staticmethod
+    def fft(array: list[list[float]]):
+        return list(map(lambda data: fft(np.array(data)), array))
 
-    def fft(self):
-        return list(map(lambda data: fft(np.array(data)), self.array))
+    @staticmethod
+    def fft_freq(array: list[list[float]], sampleSpacing: float = 1 / 12000):
+        return list(map(lambda data: fftfreq(len(data), sampleSpacing)[:len(data) // 2], array))
 
-    def fft_freq(self, sampleSpacing=1 / 12000):
-        return list(map(lambda data: fftfreq(len(data), sampleSpacing)[:len(data) // 2], self.array))
+    @staticmethod
+    def get_amplitudes_and_(data: list[list[float]], flag=False):
+        fft_res = fft(data)
+        if flag:
+            return np.abs(fft_res), np.angle(fft_res)
+        else:
+            return np.abs(fft_res)
