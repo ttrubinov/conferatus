@@ -20,7 +20,11 @@ class RecordingThread(QtCore.QThread):
             data = arduinoController.recordData()
 
         for i in range(0, self.__params__.batchSize):
-            fourierSample = Fourier.fft(data[i])
+            fourierSample = Fourier.get_amplitudes_and_phases(data[i])
+            # for i in fourierSample:
+            #     print(i)
+            print(fourierSample)
+
             Plotter.draw(y_axis=fourierSample)
             # if self.__recordingPresenter__.processSampleDialog():
             #     badData = False 
