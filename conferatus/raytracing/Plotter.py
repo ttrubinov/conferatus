@@ -1,8 +1,6 @@
 from matplotlib import pyplot as plt
 
-from raytracing.Fourier import Fourier
 from scipy.fft import fftfreq
-
 
 class Plotter:
     @staticmethod
