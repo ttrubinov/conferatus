@@ -6,7 +6,7 @@ from scipy.fft import fft, fftfreq
 class Fourier:
     @staticmethod
     def fft(array: list[list[float]], result_size: int = 250) -> list[list[complex]]:
-        return list(map(lambda data: fft(np.array(data))[:result_size], array))
+        return list(map(lambda data: list(fft(np.array(data))[:result_size]), array))
 
     @staticmethod
     def fft_freq(array: list[list[float]], sampleSpacing: float = 1 / 12000) -> list[list[complex]]:
@@ -20,3 +20,4 @@ class Fourier:
             return list(map(list, np.abs(fft_res))), list(map(list, np.angle(fft_res)))
         else:
             return list(map(list, np.abs(fft_res)))
+

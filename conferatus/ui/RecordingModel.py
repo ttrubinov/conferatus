@@ -17,29 +17,22 @@ class RecordingThread(QtCore.QThread):
         with ArduinoController(batch_size = self.__params__.batchSize, port = self.__params__.port) as arduinoController:
             data = arduinoController.recordData()
 
-        for i in range(0, self.__params__.batchSize):
-            fourierSample = Fourier.get_amplitudes_and_phases(data[i])
-            Plotter.draw(fourierSample)
+        samples = []
 
-            # Plottr().show()
-            # Plotter.draw(y_axis=fourierSample, color = ['red', 'blue', 'green'])
-            # if self.__recordingPresenter__.processSampleDialog():
-            #     badData = False 
-            # else:
-            #     badData = True
+        for batch in data:
+            fourierSample = list(Fourier.get_amplitudes_and_phases(batch))
+            Plotter.draw(fourierSample, color = ['red', 'midnightblue', 'green'])
 
+            samples.append(Sample(signals = fourierSample, 
+                                  angle = self.__params__.angle, 
+                                  bad_data = not self.__recordingPresenter__.processSampleDialog('raytracing/plot/fig.png'),
+                                  frequency = self.__params__.frequency,
+                                  person = self.__params__.person))
 
+        print(type(fourierSample))
+        print(type(fourierSample[0]))
 
-            sample = Sample(signals = fourierSample, 
-                            angle = self.__params__.angle, 
-                            bad_data = not self.__recordingPresenter__.processSampleDialog(),
-                            frequency = self.__params__.frequency,
-                            person = self.__params__.person)
-
-            Dataset.addData(sample, file_path=self.__params__.filename)
-        Dataset.saveData(sync = True, file_path = self.__params__.filename)
-            
-            
+        Dataset().addData(arr = samples, file_path=self.__params__.filename, sync = True)
 
 
 class RecordingModel:
