@@ -21,11 +21,7 @@ class RecordingThread(QtCore.QThread):
 
         for i in range(0, self.__params__.batchSize):
             fourierSample = Fourier.get_amplitudes_and_phases(data[i])
-            # for i in fourierSample:
-            #     print(i)
-            print(fourierSample)
-
-            Plotter.draw(y_axis=fourierSample)
+            Plotter.draw(y_axis=fourierSample, color = ['red', 'blue', 'green'])
             # if self.__recordingPresenter__.processSampleDialog():
             #     badData = False 
             # else:
