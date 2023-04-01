@@ -5,7 +5,8 @@ from raytracing.ArduinoController import ArduinoController
 
 from ui.RecordingPresenter import RecordingPresenter
 from ui.UserDefinedParamerers import UserDefinedParameters
-from PyQt6 import QtCore, QtWidgets
+from PyQt6 import QtCore
+
 
 class RecordingThread(QtCore.QThread):
     def __init__(self, recordingPresenter, params : UserDefinedParameters, parent=None):
@@ -28,9 +29,6 @@ class RecordingThread(QtCore.QThread):
                                   bad_data = not self.__recordingPresenter__.processSampleDialog('raytracing/plot/fig.png'),
                                   frequency = self.__params__.frequency,
                                   person = self.__params__.person))
-
-        print(type(fourierSample))
-        print(type(fourierSample[0]))
 
         Dataset().addData(arr = samples, file_path=self.__params__.filename, sync = True)
 
