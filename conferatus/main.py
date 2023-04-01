@@ -1,4 +1,3 @@
-import asyncio
 from PyQt6 import QtCore, QtWidgets, uic
 import sys
 
@@ -20,7 +19,7 @@ def main():
     presenter.setSettingsWindowView(window)
     presenter.setFineDialogView(dialog)
 
-    asyncio.run(app.exec())
+    app.exec()
 
 
 if __name__ == '__main__':
