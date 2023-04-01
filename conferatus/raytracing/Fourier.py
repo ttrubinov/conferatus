@@ -9,7 +9,7 @@ class Fourier:
         return list(map(lambda data: list(fft(np.array(data))[:result_size]), array))
 
     @staticmethod
-    def fft_freq(array: list[list[float]], sampleSpacing: float = 1 / 12000) -> list[list[complex]]:
+    def fft_freq(array: list[list[float]], sampleSpacing: float = 1 / 11050) -> list[list[complex]]:
         return list(map(lambda data: fftfreq(len(data), sampleSpacing)[:len(data) // 2], array))
 
     @staticmethod
