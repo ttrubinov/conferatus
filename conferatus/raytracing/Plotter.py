@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 
 import matplotlib
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 from scipy.fft import fftfreq
 
@@ -22,7 +22,7 @@ class Plotter:
         def __x_axis_filling():
             if x_axis is None:
                 n = len(y_axis[0])
-                return fftfreq(n, 1 / 12000)[:n // 2]
+                return fftfreq(n, 1 / 12000)
             else:
                 return x_axis
 
@@ -30,9 +30,9 @@ class Plotter:
             for data, clr, title in zip(y_axis, color, name):
                 x_axis = __x_axis_filling()
                 plt.plot(x_axis, data, color=clr)
-                __show(title)
+            __show(name[0])
         else:
             for data in y_axis:
                 x_axis = __x_axis_filling()
                 plt.plot(x_axis, data, color="b")
-                __show()
+            __show()
