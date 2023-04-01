@@ -9,7 +9,7 @@ class MotionController:
     def update_value(self, new_value: float) -> None:
         self.angle = self.coefficient * new_value + (1 - self.coefficient) * self.angle
 
-    def whether_to_spin(self) -> bool:
+    def should_spin(self) -> bool:
         if abs(self.angle - self.__get_value()) < 15:
             return False
         return True
