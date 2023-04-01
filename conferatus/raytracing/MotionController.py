@@ -1,18 +1,11 @@
+import serial
+
+
 class MotionController:
-    def __init__(self, start_angle: float = 0, coefficient: float = 0.5):
-        self.angle = start_angle
-        self.coefficient = coefficient
+    def __init__(self, baud_rate=230400, port: str = f"COM3"):
+        self.port = port
+        self.baud_rate = baud_rate
+        self.serial = serial.Serial(self.port, self.baud_rate, timeout=2)
 
-    def __get_value(self):
-        return self.angle
-
-    def update_value(self, new_value: float):
-        self.angle = self.coefficient * new_value + (1 - self.coefficient) * self.angle
-
-    def whether_to_spin(self) -> bool:
-        if abs(self.angle - self.__get_value()) < 15:
-            return False
-        return True
-
-    def get_rotation_angle(self):
-        return self.__get_value()
+    def move(self, angle):
+        self.serial.write((180 - angle).to_bytes(1, 'little'))
