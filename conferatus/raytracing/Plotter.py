@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 
-from raytracing.Fourier import Fourier
+from conferatus.conferatus.raytracing.Fourier import Fourier
+from scipy.fft import fftfreq
 
 
 class Plotter:
@@ -20,7 +21,7 @@ class Plotter:
         def __x_axis_filling():
             if x_axis is None:
                 n = len(y_axis[0])
-                return (Fourier.fft_freq([y_axis[0]])[1:n // 2])[0]
+                return fftfreq(n, 1 / 12000)[:len(data) // 2]
             else:
                 return x_axis
 
