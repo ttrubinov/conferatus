@@ -3,10 +3,10 @@ class MotionController:
         self.angle = start_angle
         self.coefficient = coefficient
 
-    def __get_value(self):
+    def __get_value(self) -> float:
         return self.angle
 
-    def update_value(self, new_value: float):
+    def update_value(self, new_value: float) -> None:
         self.angle = self.coefficient * new_value + (1 - self.coefficient) * self.angle
 
     def whether_to_spin(self) -> bool:
@@ -14,5 +14,5 @@ class MotionController:
             return False
         return True
 
-    def get_rotation_angle(self):
+    def get_rotation_angle(self) -> float:
         return self.__get_value()

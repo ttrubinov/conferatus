@@ -7,5 +7,5 @@ class MotionController:
         self.baud_rate = baud_rate
         self.serial = serial.Serial(self.port, self.baud_rate, timeout=2)
 
-    def move(self, angle):
+    def move(self, angle: int) -> None:
         self.serial.write((180 - angle).to_bytes(1, 'little'))
