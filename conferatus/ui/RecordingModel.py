@@ -1,6 +1,6 @@
 
 
-from raytracing.Arduino import ArduinoController
+from raytracing.ArduinoController import ArduinoController
 from ui.RecordingPresenter import RecordingPresenter
 from ui.UserDefinedParamerers import UserDefinedParameters
 from PyQt6 import QtCore
