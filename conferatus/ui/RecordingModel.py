@@ -1,5 +1,8 @@
 
 
+from raytracing.Fourier import Fourier
+from raytracing.Dataset import Dataset, Sample
+from raytracing.Plotter import Plotter
 from raytracing.ArduinoController import ArduinoController
 from ui.RecordingPresenter import RecordingPresenter
 from ui.UserDefinedParamerers import UserDefinedParameters
@@ -7,9 +10,9 @@ from PyQt6 import QtCore
 
 
 class RecordingThread(QtCore.QThread):
-    def __init__(self, settingsPresenter, params : UserDefinedParameters, parent=None):
+    def __init__(self, recordingPresenter, params : UserDefinedParameters, parent=None):
         super(RecordingThread, self).__init__(parent)
-        self.__settingsPresenter__ = settingsPresenter
+        self.__recordingPresenter__ = recordingPresenter
         self.__params__ = params
         
     def run(self):
@@ -17,18 +20,33 @@ class RecordingThread(QtCore.QThread):
             data = arduinoController.recordData()
 
         for i in range(0, self.__params__.batchSize):
-            # open plotter
-            print(self.__settingsPresenter__.processSampleDialog())
+            fourierSample = Fourier.fft(data[i])
+            Plotter.draw(y_axis=fourierSample)
+            # if self.__recordingPresenter__.processSampleDialog():
+            #     badData = False 
+            # else:
+            #     badData = True
+
+            sample = Sample(signals = fourierSample, 
+                            angle = self.__params__.angle, 
+                            bad_data = not self.__recordingPresenter__.processSampleDialog(),
+                            frequency = self.__params__.frequency,
+                            person = self.__params__.person)
+
+            Dataset.addData(sample, file_path=self.__params__.filename)
+        Dataset.saveData(sync = True, file_path = self.__params__.filename)
+            
+            
 
 
 class RecordingModel:
-    def __init__(self, settingsPresenter : RecordingPresenter):
-        self.__settingsPresenter__ = settingsPresenter
+    def __init__(self, recordingPresenter : RecordingPresenter):
+        self.__recordingPresenter__ = recordingPresenter
 
     def readSamples(self, params : UserDefinedParameters):
         print(params)
 
-        self.thread = RecordingThread(self.__settingsPresenter__, params)
-        self.thread.finished.connect(self.__settingsPresenter__.finishedReadingSamples)
+        self.thread = RecordingThread(self.__recordingPresenter__, params)
+        self.thread.finished.connect(self.__recordingPresenter__.finishedReadingSamples)
 
         self.thread.start()
