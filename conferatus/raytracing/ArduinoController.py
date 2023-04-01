@@ -19,7 +19,7 @@ class ArduinoController:
         self.serial = serial.Serial(self.port, self.baud_rate, timeout=2)
         return self
 
-    def __exit__(self):
+    def __exit__(self, exception_type, exception_value, exception_traceback):
         self.serial.close()
 
     def recordData(self, batch_size: int = None, port: str = None) -> list[list[list[float]]]:
@@ -31,18 +31,17 @@ class ArduinoController:
         ser = self.serial
         print("started")
 
-        answer = []
 
+        arr = []
         for i in range(0, batch_size):
             ser.write(b'c\n')
-            arr = []
+
             while not ("S" in (a := ser.readline().decode())):
                 print(a)
                 time.sleep(1)
                 ser.write(b'c')
                 print("Waiting")
             for j in range(self.data_size):
-                tmp = False
                 line = ser.readline()  # read a byte
                 if line:
                     arr.append(line)
@@ -57,7 +56,7 @@ class ArduinoController:
                 for index, value in enumerate(line):
                     sample[index].append(value)
             answer.append(sample)
-
+        return answer
         # for sample in range(0, batch_size):
         #     for line in range(0, data_size):
         #         answer = map(float, line.decode().strip().split())
@@ -68,4 +67,4 @@ class ArduinoController:
 
 if __name__ == '__main__':
     with ArduinoController(3, baud_rate=230400, port="COM3") as controller:
-        print(controller.recordData())
+        print(controller.recordData(2))
