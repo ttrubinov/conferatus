@@ -14,9 +14,9 @@ class Fourier:
 
     @staticmethod
     def get_amplitudes_and_phases(data: list[list[float]],
-                                  should_calculate_phases: bool = False) -> tuple[ndarray, ndarray] | ndarray:
-        fft_res = fft(data)
+                                  should_calculate_phases: bool = False) -> tuple[list, list] | list:
+        fft_res = Fourier.fft(data)
         if should_calculate_phases:
-            return np.abs(fft_res), np.angle(fft_res)
+            return list(map(list, np.abs(fft_res))), list(map(list, np.angle(fft_res)))
         else:
-            return np.abs(fft_res)
+            return list(map(list, np.abs(fft_res)))
