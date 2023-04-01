@@ -5,11 +5,10 @@ from scipy.fft import fftfreq
 matplotlib.use('Agg')
 
 
-
 class Plotter:
     @staticmethod
     def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: str = None,
-             x_lim: int = 2000, legend: str = None) -> None:
+             x_lim: int = 2000, legend: str = None, save_path: str = 'raytracing/plot/fig.png') -> None:
         def __show(plotTitle: str = ""):
             plt.title(plotTitle)
             if x_lim is not None:
@@ -17,7 +16,7 @@ class Plotter:
             if legend is not None:
                 plt.legend(legend)
             plt.grid()
-            plt.savefig('raytracing/plot/fig.png', dpi=150)
+            plt.savefig(save_path, dpi=150)
             plt.clf()
 
         def __x_axis_filling():
