@@ -13,7 +13,8 @@ class RecordingPresenter:
         self.__settingsWindowView__.statusbar.showMessage("Recording...")
         self.__settingsModel__.readSamples(self.__settingsWindowView__.getUserDefinedParameters())
 
-    def processSampleDialog(self) -> bool:
+    def processSampleDialog(self, imagePath = 'raytracing/plot/fig.png') -> bool:
+        self.__fineDialogView__.setPicture(imagePath)
         return self.__fineDialogView__.exec()
     
     def finishedReadingSamples(self):
