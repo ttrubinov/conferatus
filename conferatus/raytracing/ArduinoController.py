@@ -1,8 +1,11 @@
 import time
 
 import serial
-from itertools import batched
 
+def batched(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
 
 class ArduinoController:
     def __init__(self, batch_size: int, baud_rate=230400, port: str = f"COM3", data_size=250):
