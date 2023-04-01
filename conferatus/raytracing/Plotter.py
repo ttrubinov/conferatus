@@ -1,9 +1,9 @@
 from matplotlib import pyplot as plt
-
 import matplotlib
-# matplotlib.use("Agg")
+matplotlib.use('Agg')
 
 from scipy.fft import fftfreq
+
 
 class Plotter:
     @staticmethod
@@ -16,7 +16,7 @@ class Plotter:
             if legend is not None:
                 plt.legend(legend)
             plt.grid()
-            plt.show()
+            plt.savefig('raytracing/plot/fig.png')
             plt.clf()
 
         def __x_axis_filling():
