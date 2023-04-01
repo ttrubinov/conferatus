@@ -7,7 +7,7 @@ from scipy.fft import fftfreq
 
 class Plotter:
     @staticmethod
-    def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: list[str] = None,
+    def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: str = None,
              x_lim: int = None, legend: str = None) -> None:
         def __show(plotTitle: str = ""):
             plt.title(plotTitle)
@@ -26,13 +26,15 @@ class Plotter:
             else:
                 return x_axis
 
-        if color is not None and name is not None and len(y_axis) == len(color) == len(name):
-            for data, clr, title in zip(y_axis, color, name):
+        if color is not None and len(y_axis) == len(color):
+            for data, clr in zip(y_axis, color):
                 x_axis = __x_axis_filling()
                 plt.plot(x_axis, data, color=clr)
-            __show(name[0])
         else:
             for data in y_axis:
                 x_axis = __x_axis_filling()
                 plt.plot(x_axis, data, color="b")
+        if name is not None:
+            __show(name)
+        else:
             __show()
