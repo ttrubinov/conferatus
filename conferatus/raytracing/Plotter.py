@@ -20,7 +20,7 @@ class Plotter:
         def __x_axis_filling():
             if x_axis is None:
                 n = len(y_axis[0])
-                return Fourier.fft_freq(y_axis)[1:n // 2]
+                return (Fourier.fft_freq([y_axis[0]])[1:n // 2])[0]
             else:
                 return x_axis
 
