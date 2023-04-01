@@ -21,7 +21,7 @@ class Plotter:
         def __x_axis_filling():
             if x_axis is None:
                 n = len(y_axis[0])
-                return fftfreq(n, 1 / 12000)[:len(data) // 2]
+                return fftfreq(n, 1 / 12000)[:n // 2]
             else:
                 return x_axis
 
