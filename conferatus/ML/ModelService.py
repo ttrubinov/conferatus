@@ -1,4 +1,4 @@
-from conferatus.conferatus.ML.Dataset import Dataset
+from conferatus.conferatus.ML.Datasets.Dataset import Dataset
 
 
 class ModelService:
