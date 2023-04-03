@@ -1,4 +1,4 @@
-from conferatus.conferatus.raytracing.ML.Dataset import Dataset
+from conferatus.conferatus.ML.Dataset import Dataset
 
 
 class ModelService:
