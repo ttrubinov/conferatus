@@ -3,157 +3,106 @@ import numpy as np
 # from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
-from tensorflow.keras import layers
 import tensorflow as tf
 
+from conferatus.ML.Datasets.Dataset import Sample
 
-class Model:
 
-    def __init__(self, sample_size=250, mic_amount=3, has_person=False, has_frequency=True):
-        inputs = keras.Input(shape=(mic_amount, sample_size), name="microphones")
-        lay = layers.Dense(64, activation="relu", name="dense_1")(inputs)
-        lay = layers.Dense(64, activation="relu", name="dense_2")(lay)
-        predictions = layers.Dense(4, activation="softmax", name="predictions")(lay)
-        angle = layers.Dense(1, activation="sigmoid", name="angle")(lay)
-        frequency = layers.Dense(1, activation="sigmoid", name="frequency")(lay)
-        person = layers.Dense(1, activation="sigmoid", name="frequency")(lay)
+class BasicModel:
 
+    @staticmethod
+    def _base_layer(data_amount=250, mic_amount=3):
+        mic_inputs = keras.layers.Input(shape=(mic_amount, data_amount))
+        dense = keras.layers.Dense(64, activation="relu")(mic_inputs)
+        x = keras.layers.Dense(64, activation="relu")(dense)
+        return mic_inputs, x
+
+    def __init__(self, sample_size=250, mic_amount=3, person_dict: dict = None, max_frequency=1000,
+                 max_angle=180):
+        if not (person_dict is None):
+            self.person_dict = person_dict
+            self.person_dict[""] = 0
+        else:
+            self.person_dict = {"": 0, "Misha": 1, "Pasha": 2, "Tima": 3}
+        self.maxFrequency = max_frequency
+        self.max_angle = max_angle
+
+        inp, model_classification_layer = \
+            BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        model_classification_layer = keras.layers.Dense(3)(model_classification_layer)
+        self.model_classification = tf.keras.Model(inputs=inp, outputs=model_classification_layer)
+        self.model_classification.compile(optimizer='adam',
+                                          loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
+
+        # model_angle_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        # model_angle_layer = keras.layers.Dense(1)(model_angle_layer)
+        # self.model_angle = tf.keras.Sequential([model_angle_layer])
+        # self.model_angle.compile(optimizer='adam',
+        #                          loss=keras.losses.mse)
+        #
+        # model_freq_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        # model_freq_layer = keras.layers.Dense(1)(model_freq_layer)
+        # self.model_freq = tf.keras.Sequential([model_freq_layer])
+        # self.model_freq.compile(optimizer='adam',
+        #                         loss=keras.losses.mse)
+        #
+        # model_person_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        # model_person_layer = keras.layers.Dense(len(person_dict))(model_person_layer)
+        # self.model_person = tf.keras.Sequential([model_person_layer])
+        # self.model_person.compile(optimizer='adam',
+        #                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
+
+    @staticmethod
+    def prepare_data(data: list[Sample], person_dict: dict, max_freq: int, max_angle: int):
+        classification_data = ([], [])
+        angle_data = ([], [])
+        freq_data = ([], [])
+        person_data = ([], [])
+        for sample in data:
+            signals = sample.signals
+            classification_data[0].append(signals)
+            if sample.bad_data:
+                classification_data[1].append(0)
+            elif sample.frequency is not None:
+                freq_data[0].append(signals)
+                freq_data[1].append(sample.frequency / max_freq)
+                classification_data[1].append(1)
+            elif sample.person is not None:
+                person_data[0].append(signals)
+                if sample.person in person_dict:
+                    person_data[1].append(person_dict[sample.person])
+                else:
+                    person_data[1].append(0)
+                classification_data[1].append(2)
+            else:
+                raise sample
+            if not sample.bad_data:
+                angle_data[0].append(signals)
+                angle_data[1].append(sample.angle / max_angle)
+
+        return {
+            "classification_data": classification_data,
+            "angle_data": angle_data,
+            "freq_data": freq_data,
+            "person_data": person_data
+        }
+
+    def fit(self, data: list[Sample], epochs=500):
+        prepared = BasicModel.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
+        classification_data = prepared["classification_data"]
+        angle_data = prepared["angle_data"]
+        freq_data = prepared["freq_data"]
+        person_data = prepared["person_data"]
+        self.model_classification.fit(classification_data[0], classification_data[1], epochs=epochs)
+        pass
+
+    def predict_class(self, data: list[list[float]]):
+        return self.model_classification.predict(data)
+
+
+if __name__ == '__main__':
+    model = BasicModel(sample_size=1, mic_amount=1)
+    model.fit([Sample([[1]], 90, frequency=500), Sample([[0]], bad_data=True)])
+    print(model.predict_class([[1]]))
+    print(model.predict_class([[0]]))
     pass
-
-
-image_input = keras.Input(shape=(3, 250), name="microphones")
-# timeseries_input = keras.Input(shape=(None, 10), name="ts_input")
-
-x1 = layers.Dense(3)(image_input)
-# x1 = layers.Dense()(x1)
-
-# x2 = layers.Conv1D(3, 3)(timeseries_input)
-# x2 = layers.GlobalMaxPooling1D()(x2)
-
-# x = layers.concatenate([x1, x2])
-
-score_output = layers.Dense(1, name="score_output")(x1)
-# class_output = layers.Dense(5, name="class_output")(x)
-
-model = keras.Model(
-    inputs=[image_input], outputs=[score_output]
-)
-model.compile(
-    optimizer=keras.optimizers.RMSprop(1e-3),
-    loss=[keras.losses.MeanSquaredError(), keras.losses.CategoricalCrossentropy()],
-)
-score_targets = np.random.random_sample(size=(1, 1))
-model.fit((dt := np.random.random_sample(size=(1, 3, 250))), score_targets)
-print(dt)
-input()
-
-
-def get_uncompiled_model():
-    inputs = keras.Input(shape=(784,), name="digits")
-    x = layers.Dense(64, activation="relu", name="dense_1")(inputs)
-    x = layers.Dense(64, activation="relu", name="dense_2")(x)
-    outputs = layers.Dense(10, activation="softmax", name="predictions")(x)
-    model = keras.Model(inputs=inputs, outputs=outputs)
-    return model
-
-
-def get_compiled_model():
-    model = get_uncompiled_model()
-    model.compile(
-        optimizer="rmsprop",
-        loss="sparse_categorical_crossentropy",
-        metrics=["sparse_categorical_accuracy"],
-    )
-    return model
-
-
-def custom_mean_squared_error(y_true, y_pred):
-    return tf.math.reduce_mean(tf.square(y_true - y_pred))
-
-
-class CustomMSE(keras.losses.Loss):
-    def __init__(self, regularization_factor=0.1, name="custom_mse"):
-        super().__init__(name=name)
-        self.regularization_factor = regularization_factor
-
-    def call(self, y_true, y_pred):
-        mse = tf.math.reduce_mean(tf.square(y_true - y_pred))
-        reg = tf.math.reduce_mean(tf.square(0.5 - y_pred))
-        return mse + reg * self.regularization_factor
-
-
-model = get_uncompiled_model()
-model.compile(optimizer=keras.optimizers.Adam(), loss=CustomMSE())
-
-y_train_one_hot = tf.one_hot(y_train, depth=10)
-model.fit(x_train, y_train_one_hot, batch_size=64, epochs=1)
-
-
-class CategoricalTruePositives(keras.metrics.Metric):
-    def __init__(self, name="categorical_true_positives", **kwargs):
-        super(CategoricalTruePositives, self).__init__(name=name, **kwargs)
-        self.true_positives = self.add_weight(name="ctp", initializer="zeros")
-
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        y_pred = tf.reshape(tf.argmax(y_pred, axis=1), shape=(-1, 1))
-        values = tf.cast(y_true, "int32") == tf.cast(y_pred, "int32")
-        values = tf.cast(values, "float32")
-        if sample_weight is not None:
-            sample_weight = tf.cast(sample_weight, "float32")
-            values = tf.multiply(values, sample_weight)
-        self.true_positives.assign_add(tf.reduce_sum(values))
-
-    def result(self):
-        return self.true_positives
-
-    def reset_state(self):
-        # The state of the metric will be reset at the start of each epoch.
-        self.true_positives.assign(0.0)
-
-
-model = get_uncompiled_model()
-model.compile(
-    optimizer=keras.optimizers.RMSprop(learning_rate=1e-3),
-    loss=keras.losses.SparseCategoricalCrossentropy(),
-    metrics=[CategoricalTruePositives()],
-)
-model.fit(x_train, y_train, batch_size=64, epochs=3)
-
-model = get_compiled_model()
-
-# First, let's create a training Dataset instance.
-# For the sake of our example, we'll use the same MNIST data as before.
-train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-# Shuffle and slice the dataset.
-train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
-
-# Now we get a test dataset.
-test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-test_dataset = test_dataset.batch(64)
-
-# Since the dataset already takes care of batching,
-# we don't pass a `batch_size` argument.
-model.fit(train_dataset, epochs=3)
-
-# You can also evaluate or predict on a dataset.
-print("Evaluate")
-result = model.evaluate(test_dataset)
-dict(zip(model.metrics_names, result))
-
-image_input = keras.Input(shape=(32, 32, 3), name="img_input")
-timeseries_input = keras.Input(shape=(None, 10), name="ts_input")
-
-x1 = layers.Conv2D(3, 3)(image_input)
-x1 = layers.GlobalMaxPooling2D()(x1)
-
-x2 = layers.Conv1D(3, 3)(timeseries_input)
-x2 = layers.GlobalMaxPooling1D()(x2)
-
-x = layers.concatenate([x1, x2])
-
-score_output = layers.Dense(1, name="score_output")(x)
-class_output = layers.Dense(5, name="class_output")(x)
-
-model = keras.Model(
-    inputs=[image_input, timeseries_input], outputs=[score_output, class_output]
-)
