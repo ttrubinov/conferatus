@@ -34,23 +34,23 @@ class BasicModel:
         self.model_classification.compile(optimizer='adam',
                                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
 
-        # model_angle_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        # model_angle_layer = keras.layers.Dense(1)(model_angle_layer)
-        # self.model_angle = tf.keras.Sequential([model_angle_layer])
-        # self.model_angle.compile(optimizer='adam',
-        #                          loss=keras.losses.mse)
-        #
-        # model_freq_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        # model_freq_layer = keras.layers.Dense(1)(model_freq_layer)
-        # self.model_freq = tf.keras.Sequential([model_freq_layer])
-        # self.model_freq.compile(optimizer='adam',
-        #                         loss=keras.losses.mse)
-        #
-        # model_person_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        # model_person_layer = keras.layers.Dense(len(person_dict))(model_person_layer)
-        # self.model_person = tf.keras.Sequential([model_person_layer])
-        # self.model_person.compile(optimizer='adam',
-        #                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
+        inp, model_angle_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        model_angle_layer = keras.layers.Dense(1)(model_angle_layer)
+        self.model_angle = tf.keras.Model(inputs=inp, outputs=model_angle_layer)
+        self.model_angle.compile(optimizer='adam',
+                                 loss=keras.losses.mse)
+
+        inp, model_freq_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        model_freq_layer = keras.layers.Dense(1)(model_freq_layer)
+        self.model_freq = tf.keras.Model(inputs=inp, outputs=model_freq_layer)
+        self.model_freq.compile(optimizer='adam',
+                                loss=keras.losses.mse)
+
+        inp, model_person_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        model_person_layer = keras.layers.Dense(len(self.person_dict))(model_person_layer)
+        self.model_person = tf.keras.Model(inputs=inp, outputs=model_person_layer)
+        self.model_person.compile(optimizer='adam',
+                                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
 
     @staticmethod
     def prepare_data(data: list[Sample], person_dict: dict, max_freq: int, max_angle: int):
@@ -63,11 +63,11 @@ class BasicModel:
             classification_data[0].append(signals)
             if sample.bad_data:
                 classification_data[1].append(0)
-            elif sample.frequency is not None:
+            elif not (sample.frequency is None):
                 freq_data[0].append(signals)
                 freq_data[1].append(sample.frequency / max_freq)
                 classification_data[1].append(1)
-            elif sample.person is not None:
+            elif not (sample.person is None):
                 person_data[0].append(signals)
                 if sample.person in person_dict:
                     person_data[1].append(person_dict[sample.person])
@@ -89,11 +89,15 @@ class BasicModel:
 
     def fit(self, data: list[Sample], epochs=500):
         prepared = BasicModel.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
+        print(prepared)
         classification_data = prepared["classification_data"]
         angle_data = prepared["angle_data"]
         freq_data = prepared["freq_data"]
         person_data = prepared["person_data"]
         self.model_classification.fit(classification_data[0], classification_data[1], epochs=epochs)
+        self.model_angle.fit(angle_data[0], angle_data[1], epochs=epochs)
+        self.model_freq.fit(freq_data[0], freq_data[1], epochs=epochs)
+        self.model_person.fit(person_data[0], person_data[1], epochs=epochs)
         pass
 
     def predict_class(self, data: list[list[float]]):
@@ -102,7 +106,10 @@ class BasicModel:
 
 if __name__ == '__main__':
     model = BasicModel(sample_size=1, mic_amount=1)
-    model.fit([Sample([[1]], 90, frequency=500), Sample([[0]], bad_data=True)])
+    model.fit([Sample([[2]], 90, person="Misha"), Sample([[1]], 90, frequency=500), Sample([[0]], bad_data=True)],
+              epochs=150)
+
+    print(model.predict_class([[2]]))
     print(model.predict_class([[1]]))
     print(model.predict_class([[0]]))
     pass
