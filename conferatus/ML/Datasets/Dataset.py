@@ -3,7 +3,7 @@ import pathlib
 
 
 class Sample:
-    def __init__(self, signals: list[list[float]], angle: float, bad_data=False, frequency=None, person: str = None):
+    def __init__(self, signals: list[list[float]], angle: float =None, bad_data=False, frequency=None, person: str = None):
         self.angle = angle
         self.signals = signals
         self.frequency = frequency
