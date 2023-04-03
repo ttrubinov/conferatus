@@ -1,11 +1,9 @@
 import numpy as np
-# from keras import Sequential
-# from keras.layers import Dense
-from sklearn.model_selection import train_test_split
 from tensorflow import keras
 import tensorflow as tf
 
 from conferatus.ML.Datasets.Dataset import Sample
+from conferatus.ML.core.CompiledModel import CompiledModel
 
 
 class BasicModel:
@@ -98,18 +96,26 @@ class BasicModel:
         self.model_angle.fit(angle_data[0], angle_data[1], epochs=epochs)
         self.model_freq.fit(freq_data[0], freq_data[1], epochs=epochs)
         self.model_person.fit(person_data[0], person_data[1], epochs=epochs)
-        pass
 
-    def predict_class(self, data: list[list[float]]):
-        return self.model_classification.predict(data)
+    def compile(self) -> CompiledModel:
+        self.model_classification = tf.keras.Sequential([self.model_classification,
+                                                         tf.keras.layers.Softmax()])
+        self.model_person = tf.keras.Sequential([self.model_person,
+                                                 tf.keras.layers.Softmax()])
+        return CompiledModel(model_classification=self.model_classification, model_angle=self.model_angle,
+                             model_freq=self.model_freq, model_person=self.model_person,
+                             num_to_person_dict={v: k for k, v in self.person_dict.items()}, max_freq=self.maxFrequency,
+                             max_angle=self.max_angle)
 
 
 if __name__ == '__main__':
-    model = BasicModel(sample_size=1, mic_amount=1)
-    model.fit([Sample([[2]], 90, person="Misha"), Sample([[1]], 90, frequency=500), Sample([[0]], bad_data=True)],
-              epochs=150)
 
-    print(model.predict_class([[2]]))
-    print(model.predict_class([[1]]))
-    print(model.predict_class([[0]]))
+    model = BasicModel(sample_size=2, mic_amount=1)
+    model.fit([Sample([[2,2]], 90, person="Misha"), Sample([[1,1]], 90, frequency=500), Sample([[0,0]], bad_data=True)],
+              epochs=200)
+    print(model.model_classification.summary())
+    comp_model = model.compile()
+    print(comp_model.predict_class([[[2,2]]]))
+    print(comp_model.predict_class([[[1,1]]]))
+    print(comp_model.predict_class([[[0,0]]]))
     pass
