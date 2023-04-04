@@ -30,10 +30,9 @@ def main():
     train, valid = samples[:len(samples) - 10], samples[len(samples) - 10:]
     print(len(valid), "asdasd", valid)
     print(len(train), train[0], "\n\n")
-    model.fit(train, epochs=1000, model_class_epochs=100, model_angle_epochs=3000)
+    model.fit(train, epochs=1000, model_class_epochs=120, model_angle_epochs=1700)
     compiled = model.compile()
-    compiled.save("another_neur", "4")
-
+    compiled.save("40neurs_small_learning", "9")
 
     for data_for_validation in valid:
         print(data_for_validation, compiled.predict_all(data_for_validation.signals))
