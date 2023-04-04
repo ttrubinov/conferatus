@@ -13,11 +13,12 @@ class ModelLearning:
     @staticmethod
     def _base_layer(data_amount=250, mic_amount=3):
         mic_inputs = keras.layers.Input(shape=(mic_amount * data_amount))
-        dense = keras.layers.Dense(64, activation="relu")(mic_inputs)
-        x = keras.layers.Dense(64, activation="relu")(dense)
+        dense = keras.layers.Dense(20, activation="relu")(mic_inputs)
+        x = keras.layers.Dense(30, activation="relu")(dense)
+        x = keras.layers.Dense(60, activation="sigmoid")(x)
         return mic_inputs, x
 
-    def __init__(self, sample_size=250, mic_amount=3, person_dict: dict = None, max_frequency=1000,
+    def __init__(self, sample_size=250, mic_amount=3, person_dict: dict = None, max_frequency=2000,
                  max_angle=180):
         if not (person_dict is None):
             self.person_dict = person_dict
@@ -35,19 +36,19 @@ class ModelLearning:
                                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
 
         inp, model_angle_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        model_angle_layer = keras.layers.Dense(1)(model_angle_layer)
+        model_angle_layer = keras.layers.Dense(1, activation=keras.activations.sigmoid)(model_angle_layer)
         self.model_angle = tf.keras.Model(inputs=inp, outputs=model_angle_layer)
         self.model_angle.compile(optimizer='adam',
                                  loss=keras.losses.mse)
 
         inp, model_freq_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        model_freq_layer = keras.layers.Dense(1)(model_freq_layer)
+        model_freq_layer = keras.layers.Dense(1, activation=keras.activations.sigmoid)(model_freq_layer)
         self.model_freq = tf.keras.Model(inputs=inp, outputs=model_freq_layer)
         self.model_freq.compile(optimizer='adam',
                                 loss=keras.losses.mse)
 
         inp, model_person_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        model_person_layer = keras.layers.Dense(4)(model_person_layer) #
+        model_person_layer = keras.layers.Dense(4)(model_person_layer)  #
         self.model_person = tf.keras.Model(inputs=inp, outputs=model_person_layer)
         self.model_person.compile(optimizer='adam',
                                   loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
@@ -65,7 +66,7 @@ class ModelLearning:
                 classification_data[1].append(0)
             elif not (sample.frequency is None):
                 freq_data[0].append(signals)
-                freq_data[1].append(sample.frequency / max_freq)
+                freq_data[1].append(float(sample.frequency) / max_freq)
                 classification_data[1].append(1)
             elif not (sample.person is None):
                 person_data[0].append(signals)
@@ -79,7 +80,7 @@ class ModelLearning:
                 raise sample
             if not sample.bad_data:
                 angle_data[0].append(signals)
-                angle_data[1].append(sample.angle / max_angle)
+                angle_data[1].append(sample.angle / (max_angle+1)+0.001)
         print(person_data)
         return {
             "classification_data": classification_data,
@@ -88,16 +89,20 @@ class ModelLearning:
             "person_data": person_data
         }
 
-    def fit(self, data: list[Sample], epochs=500):
+    def fit(self, data: list[Sample], epochs=2000, model_class_epochs=None, model_angle_epochs=None):
+        if model_class_epochs is None:
+            model_class_epochs = epochs
+        if model_angle_epochs is None:
+            model_angle_epochs = epochs
         prepared = ModelLearning.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
         classification_data = prepared["classification_data"]
         angle_data = prepared["angle_data"]
         freq_data = prepared["freq_data"]
-        person_data = prepared["person_data"]
-        self.model_classification.fit(classification_data[0], classification_data[1], epochs=epochs)
-        self.model_angle.fit(angle_data[0], angle_data[1], epochs=epochs)
+        # person_data = prepared["person_data"]
+        self.model_classification.fit(classification_data[0], classification_data[1], epochs=model_class_epochs)
+        self.model_angle.fit(angle_data[0], angle_data[1], epochs=model_angle_epochs)
         self.model_freq.fit(freq_data[0], freq_data[1], epochs=epochs)
-        self.model_person.fit(person_data[0], person_data[1], epochs=epochs)
+        # self.model_person.fit(person_data[0], person_data[1], epochs=epochs)
 
     def compile(self) -> ModelPredict:
         self.model_classification = tf.keras.Sequential([self.model_classification,
@@ -113,9 +118,10 @@ class ModelLearning:
 
 if __name__ == '__main__':
     model = ModelLearning(sample_size=2, mic_amount=2)
-    model.fit([Sample([[0.7, 0.6], [0.6, 0.7]], 90, person="Misha"), Sample([[0.3, 0.4], [0.4, 0.3]], 90, frequency=500),
-               Sample([[0, 0.1], [0.1, 0]], bad_data=True), Sample([[0.9, 0.9], [0.9, 0.9]], 90, person="Misha")],
-              epochs=250)
+    model.fit(
+        [Sample([[0.7, 0.6], [0.6, 0.7]], 90, person="Misha"), Sample([[0.3, 0.4], [0.4, 0.3]], 90, frequency=500),
+         Sample([[0, 0.1], [0.1, 0]], bad_data=True), Sample([[0.9, 0.9], [0.9, 0.9]], 90, person="Misha")],
+        epochs=250)
     comp_model = model.compile()
     comp_model.save()
     another = ModelPredict.download()
