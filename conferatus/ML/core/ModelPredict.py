@@ -5,7 +5,6 @@ import os
 import numpy as np
 from keras import Sequential
 from tensorflow import keras
-import tensorflow as tf
 
 
 class ModelPredict:
@@ -48,20 +47,19 @@ class ModelPredict:
 
     def predict_angle(self, data: list[list[float]]):
         data = [list(itertools.chain.from_iterable(data))]
-        pred = self.model_angle.predict(data)[0] * self.max_angle
+        pred = (self.model_angle.predict(data)[0]) * self.max_angle
         return pred
 
     def predict_freq(self, data: list[list[float]]):
         data = [list(itertools.chain.from_iterable(data))]
-        pred = self.model_freq.predict(data)[0] * self.max_freq
+        pred = (self.model_freq.predict(data)[0]) * self.max_freq
         return pred
 
-
-    def predict_person(self, data: list[list[float]]):
-        data = [list(itertools.chain.from_iterable(data))]
-        pred = self.model_classification.predict(data)[0]
-        max_arg: int = np.argmax(pred)
-        return self.num_to_person_dict[str(max_arg)], pred[max_arg]
+    # def predict_person(self, data: list[list[float]]):
+    #     data = [list(itertools.chain.from_iterable(data))]
+    #     pred = self.model_classification.predict(data)[0]
+    #     max_arg: int = np.argmax(pred)
+    #     return self.num_to_person_dict[str(max_arg)], pred[max_arg]
 
     def predict_all(self, data: list[list[float]], lazy=False):
         if lazy:
@@ -71,11 +69,10 @@ class ModelPredict:
                 "class": self.predict_class(data),
                 "freq": self.predict_freq(data),
                 "angle": self.predict_angle(data),
-                "person": self.predict_person(data)
+                # "person": self.predict_person(data)
+                "person": None
             }
             return answer
-
-    # TODO: add more predictions,
 
     def save(self, dir_path="./model_dir", prefix=None):
         if prefix is None:
