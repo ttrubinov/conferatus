@@ -8,7 +8,7 @@ matplotlib.use('Agg')
 class Plotter:
     @staticmethod
     def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: str = None,
-             x_lim: int = 2000, legend: str = None, file_path: str = 'raytracing/plot/fig.png') -> None:
+             x_lim: int = 2000, legend: str = None, file_path: str = 'Maths/plot/fig.png') -> None:
         def __show(plotTitle: str = ""):
             plt.title(plotTitle)
             if x_lim is not None:
