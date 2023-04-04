@@ -13,7 +13,7 @@ class Sample:
 
     def __repr__(self):
         return f"Sample angle:{self.angle}, freq:{self.frequency}, bad_data:{self.bad_data}, " \
-               f"person:{self.person}, signals:{self.signals}"
+               f"person:{self.person}, signals:{len(self.signals), len(self.signals[0])}"
 
 
 class Dataset:
@@ -49,6 +49,12 @@ class Dataset:
                 self.currentData = [Sample(**data) for data in
                                     json.load(fileData)]
         return self.currentData
+
+    @staticmethod
+    def get_samples(file_path: str = None):
+        with open(file_path, "r", encoding='utf-8') as fileData:
+            return [Sample(**data) for data in
+                    json.load(fileData)]
 
     def saveData(self, arr: list[Sample] = None, sync=False, file_path=None):
         """
