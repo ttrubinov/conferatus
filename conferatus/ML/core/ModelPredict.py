@@ -7,7 +7,7 @@ from tensorflow import keras
 import tensorflow as tf
 
 
-class CompiledModel:
+class ModelPredict:
 
     @staticmethod
     def download(dir_path="./model_dir", prefix=None):
@@ -24,8 +24,8 @@ class CompiledModel:
         with open(filepath + "model_conf.json", mode="r", encoding='utf-8') as confFile:
             conf = json.load(confFile)
 
-        return CompiledModel(model_classification=model_classification, model_angle=model_angle,
-                             model_freq=model_freq, model_person=model_person, **conf)
+        return ModelPredict(model_classification=model_classification, model_angle=model_angle,
+                            model_freq=model_freq, model_person=model_person, **conf)
 
     def __init__(self, model_classification: Sequential, model_angle: Sequential, model_freq: Sequential,
                  model_person: Sequential, num_to_person_dict: dict, max_freq: float,
