@@ -1,3 +1,4 @@
+import itertools
 import json
 import os
 
@@ -39,12 +40,40 @@ class ModelPredict:
         self.model_classification = model_classification
         self.cls = {0: "bad_data", 1: "frequency", 2: "person"}
 
-    def predict_class(self, data: list[list[list[float]]]):
-        pred = self.model_classification.predict(data)[0][0]
-        print(pred)
+    def predict_class(self, data: list[list[float]]):
+        data = [list(itertools.chain.from_iterable(data))]
+        pred = self.model_classification.predict(data)[0]
         max_arg: int = np.argmax(pred)
-        print(pred, max_arg)
         return self.cls[max_arg], pred[max_arg]
+
+    def predict_angle(self, data: list[list[float]]):
+        data = [list(itertools.chain.from_iterable(data))]
+        pred = self.model_angle.predict(data)[0] * self.max_angle
+        return pred
+
+    def predict_freq(self, data: list[list[float]]):
+        data = [list(itertools.chain.from_iterable(data))]
+        pred = self.model_freq.predict(data)[0] * self.max_freq
+        return pred
+
+
+    def predict_person(self, data: list[list[float]]):
+        data = [list(itertools.chain.from_iterable(data))]
+        pred = self.model_classification.predict(data)[0]
+        max_arg: int = np.argmax(pred)
+        return self.num_to_person_dict[str(max_arg)], pred[max_arg]
+
+    def predict_all(self, data: list[list[float]], lazy=False):
+        if lazy:
+            pass
+        else:
+            answer = {
+                "class": self.predict_class(data),
+                "freq": self.predict_freq(data),
+                "angle": self.predict_angle(data),
+                "person": self.predict_person(data)
+            }
+            return answer
 
     # TODO: add more predictions,
 

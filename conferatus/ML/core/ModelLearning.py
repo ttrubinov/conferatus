@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 from tensorflow import keras
 import tensorflow as tf
@@ -10,7 +12,7 @@ class ModelLearning:
 
     @staticmethod
     def _base_layer(data_amount=250, mic_amount=3):
-        mic_inputs = keras.layers.Input(shape=(mic_amount, data_amount))
+        mic_inputs = keras.layers.Input(shape=(mic_amount * data_amount))
         dense = keras.layers.Dense(64, activation="relu")(mic_inputs)
         x = keras.layers.Dense(64, activation="relu")(dense)
         return mic_inputs, x
@@ -21,7 +23,7 @@ class ModelLearning:
             self.person_dict = person_dict
             self.person_dict[""] = 0
         else:
-            self.person_dict = {"": 0, "Misha": 1, "Pasha": 2, "Tima": 3}
+            self.person_dict = {"": 0, "Pasha": 1, "Misha": 2, "Tima": 3}
         self.maxFrequency = max_frequency
         self.max_angle = max_angle
 
@@ -45,7 +47,7 @@ class ModelLearning:
                                 loss=keras.losses.mse)
 
         inp, model_person_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
-        model_person_layer = keras.layers.Dense(len(self.person_dict))(model_person_layer)
+        model_person_layer = keras.layers.Dense(4)(model_person_layer) #
         self.model_person = tf.keras.Model(inputs=inp, outputs=model_person_layer)
         self.model_person.compile(optimizer='adam',
                                   loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
@@ -57,7 +59,7 @@ class ModelLearning:
         freq_data = ([], [])
         person_data = ([], [])
         for sample in data:
-            signals = sample.signals
+            signals = list(itertools.chain.from_iterable(sample.signals))
             classification_data[0].append(signals)
             if sample.bad_data:
                 classification_data[1].append(0)
@@ -72,12 +74,13 @@ class ModelLearning:
                 else:
                     person_data[1].append(0)
                 classification_data[1].append(2)
+
             else:
                 raise sample
             if not sample.bad_data:
                 angle_data[0].append(signals)
                 angle_data[1].append(sample.angle / max_angle)
-
+        print(person_data)
         return {
             "classification_data": classification_data,
             "angle_data": angle_data,
@@ -87,7 +90,6 @@ class ModelLearning:
 
     def fit(self, data: list[Sample], epochs=500):
         prepared = ModelLearning.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
-        print(prepared)
         classification_data = prepared["classification_data"]
         angle_data = prepared["angle_data"]
         freq_data = prepared["freq_data"]
@@ -104,19 +106,23 @@ class ModelLearning:
                                                  tf.keras.layers.Softmax()])
         return ModelPredict(model_classification=self.model_classification, model_angle=self.model_angle,
                             model_freq=self.model_freq, model_person=self.model_person,
-                            num_to_person_dict={v: k for k, v in self.person_dict.items()}, max_freq=self.maxFrequency,
+                            num_to_person_dict={int(v): k for k, v in self.person_dict.items()},
+                            max_freq=self.maxFrequency,
                             max_angle=self.max_angle)
 
 
 if __name__ == '__main__':
-
-    model = ModelLearning(sample_size=2, mic_amount=1)
-    model.fit([Sample([[2,2]], 90, person="Misha"), Sample([[1,1]], 90, frequency=500), Sample([[0,0]], bad_data=True)],
-              epochs=1)
-    print(model.model_classification.summary())
+    model = ModelLearning(sample_size=2, mic_amount=2)
+    model.fit([Sample([[0.7, 0.6], [0.6, 0.7]], 90, person="Misha"), Sample([[0.3, 0.4], [0.4, 0.3]], 90, frequency=500),
+               Sample([[0, 0.1], [0.1, 0]], bad_data=True), Sample([[0.9, 0.9], [0.9, 0.9]], 90, person="Misha")],
+              epochs=250)
     comp_model = model.compile()
     comp_model.save()
     another = ModelPredict.download()
-    print(another.predict_class([[[2,2]]]))
+    # another = model.compile()
+    print(another.predict_all([[0, 0], [0, 0]]))
+    print(another.predict_all([[0.3, 0.4], [0.4, 0.3]]))
+    print(another.predict_all([[0.7, 0.6], [0.6, 0.7]]))
+    print(another.predict_all([[0.9, 0.9], [0.9, 0.9]]))
 
     pass
