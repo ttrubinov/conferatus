@@ -112,10 +112,11 @@ if __name__ == '__main__':
 
     model = BasicModel(sample_size=2, mic_amount=1)
     model.fit([Sample([[2,2]], 90, person="Misha"), Sample([[1,1]], 90, frequency=500), Sample([[0,0]], bad_data=True)],
-              epochs=200)
+              epochs=1)
     print(model.model_classification.summary())
     comp_model = model.compile()
-    print(comp_model.predict_class([[[2,2]]]))
-    print(comp_model.predict_class([[[1,1]]]))
-    print(comp_model.predict_class([[[0,0]]]))
+    comp_model.save()
+    another = CompiledModel.download()
+    print(another.predict_class([[[2,2]]]))
+
     pass
