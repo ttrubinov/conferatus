@@ -3,10 +3,10 @@ from tensorflow import keras
 import tensorflow as tf
 
 from conferatus.ML.Datasets.Dataset import Sample
-from conferatus.ML.core.CompiledModel import CompiledModel
+from conferatus.ML.core.ModelPredict import ModelPredict
 
 
-class BasicModel:
+class ModelLearning:
 
     @staticmethod
     def _base_layer(data_amount=250, mic_amount=3):
@@ -26,25 +26,25 @@ class BasicModel:
         self.max_angle = max_angle
 
         inp, model_classification_layer = \
-            BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+            ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
         model_classification_layer = keras.layers.Dense(3)(model_classification_layer)
         self.model_classification = tf.keras.Model(inputs=inp, outputs=model_classification_layer)
         self.model_classification.compile(optimizer='adam',
                                           loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
 
-        inp, model_angle_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        inp, model_angle_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
         model_angle_layer = keras.layers.Dense(1)(model_angle_layer)
         self.model_angle = tf.keras.Model(inputs=inp, outputs=model_angle_layer)
         self.model_angle.compile(optimizer='adam',
                                  loss=keras.losses.mse)
 
-        inp, model_freq_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        inp, model_freq_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
         model_freq_layer = keras.layers.Dense(1)(model_freq_layer)
         self.model_freq = tf.keras.Model(inputs=inp, outputs=model_freq_layer)
         self.model_freq.compile(optimizer='adam',
                                 loss=keras.losses.mse)
 
-        inp, model_person_layer = BasicModel._base_layer(data_amount=sample_size, mic_amount=mic_amount)
+        inp, model_person_layer = ModelLearning._base_layer(data_amount=sample_size, mic_amount=mic_amount)
         model_person_layer = keras.layers.Dense(len(self.person_dict))(model_person_layer)
         self.model_person = tf.keras.Model(inputs=inp, outputs=model_person_layer)
         self.model_person.compile(optimizer='adam',
@@ -86,7 +86,7 @@ class BasicModel:
         }
 
     def fit(self, data: list[Sample], epochs=500):
-        prepared = BasicModel.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
+        prepared = ModelLearning.prepare_data(data, self.person_dict, self.maxFrequency, self.max_angle)
         print(prepared)
         classification_data = prepared["classification_data"]
         angle_data = prepared["angle_data"]
@@ -97,26 +97,26 @@ class BasicModel:
         self.model_freq.fit(freq_data[0], freq_data[1], epochs=epochs)
         self.model_person.fit(person_data[0], person_data[1], epochs=epochs)
 
-    def compile(self) -> CompiledModel:
+    def compile(self) -> ModelPredict:
         self.model_classification = tf.keras.Sequential([self.model_classification,
                                                          tf.keras.layers.Softmax()])
         self.model_person = tf.keras.Sequential([self.model_person,
                                                  tf.keras.layers.Softmax()])
-        return CompiledModel(model_classification=self.model_classification, model_angle=self.model_angle,
-                             model_freq=self.model_freq, model_person=self.model_person,
-                             num_to_person_dict={v: k for k, v in self.person_dict.items()}, max_freq=self.maxFrequency,
-                             max_angle=self.max_angle)
+        return ModelPredict(model_classification=self.model_classification, model_angle=self.model_angle,
+                            model_freq=self.model_freq, model_person=self.model_person,
+                            num_to_person_dict={v: k for k, v in self.person_dict.items()}, max_freq=self.maxFrequency,
+                            max_angle=self.max_angle)
 
 
 if __name__ == '__main__':
 
-    model = BasicModel(sample_size=2, mic_amount=1)
+    model = ModelLearning(sample_size=2, mic_amount=1)
     model.fit([Sample([[2,2]], 90, person="Misha"), Sample([[1,1]], 90, frequency=500), Sample([[0,0]], bad_data=True)],
               epochs=1)
     print(model.model_classification.summary())
     comp_model = model.compile()
     comp_model.save()
-    another = CompiledModel.download()
+    another = ModelPredict.download()
     print(another.predict_class([[[2,2]]]))
 
     pass
