@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import ndarray
+# from numpy import ndarray
 from scipy.fft import fft, fftfreq
 
 
