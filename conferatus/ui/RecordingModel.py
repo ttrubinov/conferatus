@@ -22,13 +22,15 @@ class RecordingThread(QtCore.QThread):
 
         for batch in data:
             fourierSample = list(Fourier.get_amplitudes_and_phases(batch))
-            Plotter.draw(fourierSample, color = ['green', 'midnightblue', 'red'])
+            Plotter.draw(fourierSample, color = ['green', 'midnightblue', 'red'], file_path = 'Maths/plot/fig.png')
 
-            samples.append(Sample(signals = fourierSample, 
-                                  angle = self.__params__.angle, 
-                                  bad_data = not self.__recordingPresenter__.processSampleDialog('raytracing/plot/fig.png'),
-                                  frequency = self.__params__.frequency,
-                                  person = self.__params__.person))
+            sample_ok : bool = self.__recordingPresenter__.processSampleDialog('Maths/plot/fig.png')
+            if sample_ok:
+                samples.append(Sample(signals = fourierSample, 
+                                    angle = self.__params__.angle, 
+                                    bad_data = False,
+                                    frequency = self.__params__.frequency,
+                                    person = self.__params__.person))
 
         Dataset(filePath=self.__params__.filename).addData(arr = samples, sync = True)
 
