@@ -32,7 +32,7 @@ class RecordingThread(QtCore.QThread):
                                     frequency = self.__params__.frequency,
                                     person = self.__params__.person))
 
-        Dataset(filePath=self.__params__.filename).addData(arr = samples, sync = True)
+        Dataset(file_path=self.__params__.filename).addData(arr = samples, sync = True)
 
 
 class RecordingModel:
