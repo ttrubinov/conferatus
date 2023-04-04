@@ -1,7 +1,7 @@
-from raytracing.Fourier import Fourier
-from raytracing.Dataset import Dataset, Sample
-from raytracing.Plotter import Plotter
-from raytracing.ArduinoController import ArduinoController
+from Maths.Fourier import Fourier
+from ML.Datasets.Dataset import Dataset, Sample
+from Maths.Plotter import Plotter
+from Arduino.ArduinoController import ArduinoController
 
 from ui.RecordingPresenter import RecordingPresenter
 from ui.UserDefinedParamerers import UserDefinedParameters
