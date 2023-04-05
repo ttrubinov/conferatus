@@ -67,8 +67,8 @@ class ModelPredict:
         else:
             answer = {
                 "class": self.predict_class(data),
-                "freq": self.predict_freq(data),
-                "angle": self.predict_angle(data),
+                "freq": self.predict_freq(data)[0],
+                "angle": self.predict_angle(data)[0],
                 # "person": self.predict_person(data)
                 "person": None
             }
