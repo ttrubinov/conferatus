@@ -32,9 +32,9 @@ def main():
     train, valid = samples[:len(samples) - 10], samples[len(samples) - 10:]
     print(len(valid), "asdasd", valid)
     print(len(train), train[0], "\n\n")
-    model.fit(train, epochs=500, model_class_epochs=250, model_angle_epochs=1700)
+    model.fit(train, epochs=500, model_class_epochs=250, model_angle_epochs=1600)
     compiled = model.compile()
-    compiled.save("Modern", "3")
+    compiled.save("Modern", "hard")
     # compiled = ModelPredict.download("60neurs", "5")
     for data_for_validation in (train[:10]):
         print(data_for_validation, compiled.predict_all(data_for_validation.signals))
