@@ -102,9 +102,7 @@ void loop() {
         Serial.println(vol[2][index]);
 
         index++;
-        if (index >= RememberMax){
-          index = 0;
-        }
+        
       }
 
 
