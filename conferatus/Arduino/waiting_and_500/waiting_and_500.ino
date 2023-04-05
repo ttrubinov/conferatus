@@ -13,9 +13,9 @@
 
 #define T 1000000
 #define WAIT_LIMIT 10
-#define VOL_THRESHOLD 80
-#define VOL_SILENCE 40
-#define minSoundCount 4
+#define VOL_THRESHOLD 100
+#define VOL_SILENCE 50
+#define minSoundCount 5
 #define RememberMax 250
 #define bias 250
 
@@ -89,7 +89,7 @@ void loop() {
       bool silence = false;
       silence_counter = 0;
       index = 0;
-      while(/*!silence*/false)
+      while(!silence)
       {
         vol[0][index] = analogRead(MIC_PIN_0) - bias;
         vol[1][index] = analogRead(MIC_PIN_1) - bias;
