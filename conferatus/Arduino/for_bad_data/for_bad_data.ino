@@ -75,7 +75,7 @@ void loop() {
         running = true;
       }
       if (str[0] == 'c'){
-        // digitalWrite(Led, HIGH);
+         digitalWrite(Led, HIGH);
         running = true;
       }
       if (str[0] == 's'){
@@ -87,13 +87,13 @@ void loop() {
     if (running){
       Serial.println("S");
       int count = 0;
-      while (count < RememberMax){
+      while (index < RememberMax){
         vol[0][index] = analogRead(MIC_PIN_0) - bias;
         vol[1][index] = analogRead(MIC_PIN_1) - bias;
         vol[2][index] = analogRead(MIC_PIN_2) - bias;
         index++;
       }
-      index=0
+      index=0;
       while (RememberMax > index){
         Serial.print(vol[0][index]);
         Serial.print(" ");
