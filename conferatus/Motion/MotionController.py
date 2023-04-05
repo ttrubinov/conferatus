@@ -3,7 +3,7 @@ import serial
 
 
 class MotionController:
-    def __init__(self, baud_rate=9600, port: str = f"/dev/ttyUSB0"):
+    def __init__(self, baud_rate=9600, port: str = f"/dev/ttyUSB1"):
         self.port = port
         self.baud_rate = baud_rate
         self.ser = serial.Serial(self.port, self.baud_rate, timeout=2)
