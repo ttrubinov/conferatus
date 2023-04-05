@@ -13,9 +13,9 @@ class ModelLearning:
     @staticmethod
     def _base_layer(data_amount=250, mic_amount=3):
         mic_inputs = keras.layers.Input(shape=(mic_amount * data_amount))
-        dense = keras.layers.Dense(20, activation="relu")(mic_inputs)
-        x = keras.layers.Dense(30, activation="relu")(dense)
-        x = keras.layers.Dense(25, activation="sigmoid")(x)
+        dense = keras.layers.Dense(60, activation="relu")(mic_inputs)
+        x = keras.layers.Dense(80, activation="relu")(dense)
+        x = keras.layers.Dense(60, activation="sigmoid")(x)
         return mic_inputs, x
 
     def __init__(self, sample_size=250, mic_amount=3, person_dict: dict = None, max_frequency=2000,
