@@ -19,7 +19,9 @@ def get_samples_from_resources(file_paths: list, max_data=None) -> list[Sample]:
 
 
 def main():
-    file_paths = ["freqDataSet.json", "freakNewDataSet.json", ""]
+    file_paths = [  # "freqDataSet.json",
+        "freakNewDataSet.json",
+        "freakThirdDataSet.json", "BreakingBadData.json"]
     mic_amount = 3
     sample_size = 100
     model = ModelLearning(sample_size=sample_size, mic_amount=mic_amount)
@@ -30,10 +32,14 @@ def main():
     train, valid = samples[:len(samples) - 10], samples[len(samples) - 10:]
     print(len(valid), "asdasd", valid)
     print(len(train), train[0], "\n\n")
-    # model.fit(train, epochs=1000, model_class_epochs=120, model_angle_epochs=1700)
-    # compiled = model.compile()
-    # compiled.save("60neurs", "5")
-    compiled = ModelPredict.download("60neurs", "5")
+    model.fit(train, epochs=500, model_class_epochs=250, model_angle_epochs=1700)
+    compiled = model.compile()
+    compiled.save("Modern", "3")
+    # compiled = ModelPredict.download("60neurs", "5")
+    for data_for_validation in (train[:10]):
+        print(data_for_validation, compiled.predict_all(data_for_validation.signals))
+    pass
+    print('#'*30, "\n",'#'*30)
     for data_for_validation in valid:
         print(data_for_validation, compiled.predict_all(data_for_validation.signals))
     pass
