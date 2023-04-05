@@ -22,4 +22,5 @@ if __name__ == '__main__':
             print("BAD DATA")
             continue
         res_angle = neuro_prediction["angle"]
+        print("Neuro angle: ", res_angle)
         presenter.rotation(res_angle)
