@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import matplotlib
 from scipy.fft import fftfreq
 
-# matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 
 class Plotter:
