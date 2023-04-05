@@ -2,20 +2,26 @@ from matplotlib import pyplot as plt
 import matplotlib
 from scipy.fft import fftfreq
 
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 
 
 class Plotter:
     @staticmethod
     def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: str = None,
-             x_lim: int = 2000, legend: str = None, file_path: str = 'Maths/plot/fig.png') -> None:
+             x_lim: int = 2000, legend: str = None, file_path: str = 'Maths/plot/fig.png',
+             x_label: str = None, y_label: str = None) -> None:
         def __show(plotTitle: str = ""):
             plt.title(plotTitle)
             if x_lim is not None:
                 plt.xlim(0, x_lim)
             if legend is not None:
                 plt.legend(legend)
+            if x_label is not None:
+                plt.xlabel(x_label)
+            if y_label is not None:
+                plt.ylabel(y_label)
             plt.grid()
+            # plt.show()
             plt.savefig(file_path, dpi=150)
             plt.clf()
 
