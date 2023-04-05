@@ -1,18 +1,17 @@
 from Arduino.ArduinoController import ArduinoController
 from ML.core.ModelPredict import ModelPredict
 from Maths.Fourier import Fourier
-from Presenter.Presenter import Presenter
 
-dir_path = "60neurs"
-prefix = "5"
-port_micro = "/dev/ttyUSB0"
+dir_path = "Modern"
+prefix = "hard"
+port_micro = "COM3"
 port_servo = "/dev/ttyUSB1"
 data_size = 250
 
 
 if __name__ == '__main__':
     model_predict = ModelPredict.download(dir_path, prefix)
-    presenter = Presenter()
+    # presenter = Presenter()
     while True:
         with ArduinoController(1, port=port_micro, data_size=data_size) as arduino_controller:
             data = arduino_controller.recordData()[0]
@@ -25,4 +24,4 @@ if __name__ == '__main__':
             res_angle = neuro_prediction["angle"]
             print("Neuro angle: ", res_angle)
 
-            presenter.rotation(res_angle)
+            # presenter.rotation(res_angle)
