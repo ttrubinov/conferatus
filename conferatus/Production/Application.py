@@ -16,10 +16,10 @@ if __name__ == '__main__':
         arduino_controller = ArduinoController(1, port=port, data_size=data_size)
         data = arduino_controller.recordData()[0]
         fft = Fourier.fft(data, result_size=100)
-        neuro = model_predict.predict_all(fft)
-        print(neuro)
-        if neuro["class"] == "bad_data":
+        neuro_prediction = model_predict.predict_all(fft)
+        print(neuro_prediction)
+        if neuro_prediction["class"] == "bad_data":
             print("BAD DATA")
             continue
-        res_angle = neuro["angle"]
+        res_angle = neuro_prediction["angle"]
         presenter.rotation(res_angle)
