@@ -89,7 +89,8 @@ void loop() {
       bool silence = false;
       silence_counter = 0;
       index = 0;
-      while(!silence){
+      while(/*!silence*/false)
+      {
         vol[0][index] = analogRead(MIC_PIN_0) - bias;
         vol[1][index] = analogRead(MIC_PIN_1) - bias;
         vol[2][index] = analogRead(MIC_PIN_2) - bias;

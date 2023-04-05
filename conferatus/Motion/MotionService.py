@@ -10,8 +10,8 @@ class MotionService:
         self.angle = self.coefficient * new_value + (1 - self.coefficient) * self.angle
 
     def should_rotate(self) -> bool:
-        if abs(self.angle - self.__get_value()) < 15:
-            return False
+        # if abs(self.angle - self.__get_value()) < 15:
+        #     return False
         return True
 
     def get_rotation_angle(self) -> int:
