@@ -6,8 +6,8 @@ uint8_t targetAngle;
 void setup() {
     Serial.begin(9600);
     servo.attach(2);        // привод на d2
-    servo.setSpeed(100);
-    servo.setAccel(0.1);
+    servo.setSpeed(70);
+    servo.setAccel(0.3);
 }
 
 void loop() {
@@ -18,5 +18,5 @@ void loop() {
         servo.setTargetDeg(targetAngle);
     }
 
-    delay(5);
+    delay(15);
 }
