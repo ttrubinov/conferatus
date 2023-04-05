@@ -10,7 +10,9 @@ class MotionController:
 
     def move(self, angle: int) -> None:
         self.ser.write((180 - angle).to_bytes(1, 'little'))
-        time.sleep(3)
+        print((180 - angle).to_bytes(1, 'little'))
+        print(self.ser.readline())
+        time.sleep(2)
 
 # a = MotionController()
 
