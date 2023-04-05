@@ -1,5 +1,5 @@
-from conferatus.conferatus.Motion.MotionController import MotionController
-from conferatus.conferatus.Motion.MotionService import MotionService
+from Motion.MotionController import MotionController
+from Motion.MotionService import MotionService
 
 
 class Presenter:
