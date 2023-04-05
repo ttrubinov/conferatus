@@ -22,7 +22,8 @@ class RecordingThread(QtCore.QThread):
 
         for batch in data:
             fourierSample = list(Fourier.get_amplitudes_and_phases(batch))
-            Plotter.draw(fourierSample, color = ['green', 'midnightblue', 'red'], file_path = 'Maths/plot/fig.png')
+            Plotter.draw(fourierSample, color = ['green', 'midnightblue', 'red'], file_path = 'Maths/plot/fig.png',
+                         x_label="frequency", y_label="CU")
 
             sample_ok : bool = self.__recordingPresenter__.processSampleDialog('Maths/plot/fig.png')
             if sample_ok:
