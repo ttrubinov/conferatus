@@ -16,8 +16,28 @@ class RecordingThread(QtCore.QThread):
 
     def run(self):
         with ArduinoController(batch_size = self.__params__.batchSize, port = self.__params__.port) as arduinoController:
-            data = arduinoController.recordData()
+            self.__data = arduinoController.recordData()
 
+    def data(self):
+        return self.__data
+
+
+class RecordingModel:
+    def __init__(self, recordingPresenter : RecordingPresenter):
+        self.__recordingPresenter__ = recordingPresenter
+
+    def readSamples(self, params : UserDefinedParameters):
+        print(params)
+
+        self.__thread = RecordingThread(self.__recordingPresenter__, params)
+        self.__thread.finished.connect(self.__finishedReadingSamples)
+        self.__thread.start()
+
+    def __finishedReadingSamples(self):
+        self.selectSamples(self.__thread.data())
+        self.__recordingPresenter__.finishedReadingSamples()
+
+    def selectSamples(self, data):
         samples = []
 
         for batch in data:
@@ -34,16 +54,3 @@ class RecordingThread(QtCore.QThread):
                                     person = self.__params__.person))
 
         Dataset(file_path=self.__params__.filename).addData(arr = samples, sync = True)
-
-
-class RecordingModel:
-    def __init__(self, recordingPresenter : RecordingPresenter):
-        self.__recordingPresenter__ = recordingPresenter
-
-    def readSamples(self, params : UserDefinedParameters):
-        print(params)
-
-        self.thread = RecordingThread(self.__recordingPresenter__, params)
-        self.thread.finished.connect(self.__recordingPresenter__.finishedReadingSamples)
-
-        self.thread.start()
