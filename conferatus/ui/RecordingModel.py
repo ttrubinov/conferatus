@@ -41,6 +41,7 @@ class RecordingModel:
 
     def selectSamples(self, data, params : UserDefinedParameters):
         samples = []
+        real = []
 
         for batch in data:
             fourierSample = list(Fourier.get_amplitudes_and_phases(batch))
@@ -49,10 +50,16 @@ class RecordingModel:
 
             sample_ok : bool = self.__recordingPresenter.processSampleDialog('Maths/plot/fig.png')
             if sample_ok:
+                real.append(Sample(signals = batch,
+                                    angle = params.angle,
+                                    bad_data = False,
+                                    frequency = params.frequency,
+                                    person = params.person))
                 samples.append(Sample(signals = fourierSample,
                                     angle = params.angle,
                                     bad_data = False,
                                     frequency = params.frequency,
                                     person = params.person))
 
-        Dataset(file_path=params.filename).addData(arr = samples, sync = True)
+        Dataset(file_path=params.filename + ".json").addData(arr = samples, sync = True)
+        Dataset(file_path=params.filename + "_real.json").addData(arr = real, sync = True)

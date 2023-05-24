@@ -14,7 +14,7 @@
 #define T 1000000
 #define WAIT_LIMIT 10
 #define VOL_THRESHOLD 100
-#define VOL_SILENCE 50
+#define VOL_SILENCE 60
 #define minSoundCount 5
 #define RememberMax 250
 #define bias 250
