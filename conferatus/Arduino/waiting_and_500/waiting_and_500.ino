@@ -13,7 +13,7 @@
 
 #define T 1000000
 #define WAIT_LIMIT 10
-#define VOL_THRESHOLD 100
+#define VOL_THRESHOLD 90
 #define VOL_SILENCE 60
 #define minSoundCount 5
 #define RememberMax 250
@@ -47,7 +47,6 @@ void setup() {
 #else
   setBit(ADCSRA, ADPS2);
 #endif
-  attachInterrupt(digitalPinToInterrupt(2), button, RISING);
   Serial.begin(230400);
 }
 void button() {

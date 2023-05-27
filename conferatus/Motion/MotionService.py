@@ -1,5 +1,5 @@
 class MotionService:
-    def __init__(self, start_angle: float = 0, coefficient: float = 0.3):
+    def __init__(self, start_angle: float = 0, coefficient: float = 0.7):
         self.angle = start_angle
         self.coefficient = coefficient
 
