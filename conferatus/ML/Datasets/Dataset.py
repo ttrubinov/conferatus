@@ -1,6 +1,9 @@
 import json
 import pathlib
 
+from conferatus.Maths.Fourier import Fourier
+from conferatus.Maths.Plotter import Plotter
+
 
 class Sample:
     def __init__(self, signals: list[list[float]], angle: float = None, bad_data=False, frequency=None,
@@ -97,7 +100,11 @@ class Dataset:
 
 
 if __name__ == '__main__':
-    dt = Dataset()
-    dt.saveData(arr=[Sample(signals=[[1], [1], [1]], angle=0, bad_data=False, frequency=500, person=None)],
-                sync=True)
-    print(dt.getSampleData())
+    ampl, phases = Fourier.get_amplitudes_and_phases(Dataset.get_samples("2128_2_real.json").pop(2).signals,
+                                                     should_calculate_phases=True)
+    Plotter.draw(ampl, color=["r", "g", "b"], file_path="hui1.png", x_label="frequency",
+                 y_label="amplitude", name="Amplitude response", legend=["left Mic", "middle Mic", "right Mic"])
+    Plotter.draw(phases, color=["r", "g", "b"], file_path="hui2.png",
+                 x_label="frequency", y_label="phase", name="Phases response",
+                 legend=["left Mic", "middle Mic", "right Mic"])
+    print()

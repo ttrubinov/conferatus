@@ -45,6 +45,9 @@ def main():
             print("Neuro angle: ", res_angle)
 
             presenter.rotation(res_angle)
+
+
+
 if __name__ == '__main__':
     # main()
     anotherParasha()

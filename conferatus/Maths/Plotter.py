@@ -22,7 +22,7 @@ class Plotter:
                 plt.ylabel(y_label)
             plt.grid()
             # plt.show()
-            plt.savefig(file_path, dpi=150)
+            plt.savefig(file_path, dpi=300)
             plt.clf()
 
         def __x_axis_filling():
