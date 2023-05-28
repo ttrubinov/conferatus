@@ -2,14 +2,14 @@ from matplotlib import pyplot as plt
 import matplotlib
 from scipy.fft import fftfreq
 
-matplotlib.use('Agg')
-
-
 class Plotter:
     @staticmethod
     def draw(y_axis: list[list[float]], x_axis: list[float] = None, color: list[str] = None, name: str = None,
-             x_lim: int = 2000, legend: str = None, file_path: str = 'Maths/plot/fig.png',
-             x_label: str = None, y_label: str = None) -> None:
+             x_lim: int = 2000, legend: list[str] = None, file_path: str = 'Maths/plot/fig.png',
+             x_label: str = None, y_label: str = None, show_flag: bool = False, dpi: int = 150) -> None:
+        if show_flag:
+            matplotlib.use('Agg')
+
         def __show(plotTitle: str = ""):
             plt.title(plotTitle)
             if x_lim is not None:
@@ -21,8 +21,10 @@ class Plotter:
             if y_label is not None:
                 plt.ylabel(y_label)
             plt.grid()
-            # plt.show()
-            plt.savefig(file_path, dpi=300)
+            if show_flag:
+                plt.show()
+            else:
+                plt.savefig(file_path, dpi=dpi)
             plt.clf()
 
         def __x_axis_filling():
