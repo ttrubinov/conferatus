@@ -1,3 +1,4 @@
+import math
 import time
 
 import serial
@@ -63,6 +64,30 @@ class ArduinoController:
         #         for index, value in enumerate(line):
         #             answer[index].append(value)
         # return answer
+    def record_angle(self) -> float:
+        ser = self.serial
+        ser.write(b'c\n')
+
+        while not ("S" in (a := ser.readline().decode())):
+            print(a)
+            ser.write(b'c')
+            time.sleep(1)
+            print("Waiting")
+        while True:
+            line = ser.readline()
+            print(f"Why? {line}")
+            if line:
+
+                res = float(line.decode().strip())
+
+                if math.isnan(res):
+                    return None
+                return round(res)
+            else:
+                return None
+
+
+
 
 
 if __name__ == '__main__':

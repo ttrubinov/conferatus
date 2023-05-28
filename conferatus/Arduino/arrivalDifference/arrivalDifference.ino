@@ -12,17 +12,17 @@
 #endif
 
 #define T 1000000
-#define WAIT_LIMIT 15
-#define VOL_THRESHOLD 90
+#define WAIT_LIMIT 50
+#define VOL_THRESHOLD 85
 #define VOL_SILENCE 60
 #define minSoundCount 5
-#define RememberMax 250
+#define RememberMax 100
 #define bias 250
 
 
 #define bitADPS0 1
 #define bitADPS1 0
-#define bitADPS2 0
+#define bitADPS2 1
 
 #define delayM 0
 static bool running = false;
@@ -47,7 +47,7 @@ void setup() {
 #else
   setBit(ADCSRA, ADPS2);
 #endif
-  Serial.begin(230400);
+  Serial.begin(19200);
 }
 void button() {
   running = false;
@@ -68,7 +68,7 @@ int vol3 =0;
 int tick[] = {0,0,0};
 //Микрофоны должны ловить один и тот же звук, а значит, разница в приходе звука на микрофоны 
 //не должна быть очень большой
-static int floatRes = 0;
+
 int wait = 0;
 void loop() 
 {
@@ -82,7 +82,7 @@ void loop()
         running = true;
       }
       if (str[0] == 'c'){
-        // digitalWrite(Led, HIGH);
+        //digitalWrite(Led, HIGH);
         running = true;
       }
       if (str[0] == 's'){
@@ -92,6 +92,7 @@ void loop()
     }
     if (running){
       Serial.println("S");
+      running=false;
         // Finding silence
       bool silence = false;
       silence_counter = 0;
@@ -135,10 +136,12 @@ void loop()
 
 
 
+  digitalWrite(Led, HIGH);
+  running = false;
   for (unsigned long i = 0; i < T; ++i) {
-    vol[0] = analogRead(MIC_PIN_0);
-    vol[1] = analogRead(MIC_PIN_1);
-    vol[2] = analogRead(MIC_PIN_2);
+    vol[0] = analogRead(MIC_PIN_0)-bias;
+    vol[1] = analogRead(MIC_PIN_1)-bias;
+    vol[2] = analogRead(MIC_PIN_2)-bias;
     
     for (int j = 0; j < 3; ++j) {
       //Если хоть на один микрофон уже пришёл звук, мы должны следить, чтобы он пришёл 
@@ -146,11 +149,12 @@ void loop()
       if (tick[0] || tick[1] || tick[2]) {
         ++wait;
         if (wait > WAIT_LIMIT) {
+          i=0;          
           tick[0] = tick[1] = tick[2] = 0;
           wait = 0;
         }
       }
-      if (vol[j] < VOL_THRESHOLD) {
+      if (abs(vol[j]) < VOL_THRESHOLD) {
         continue;
       }
       if (!tick[j]) tick[j] = i;
@@ -162,43 +166,44 @@ void loop()
       int delta01 = tick[0]-tick[1];
       int delta21 = tick[2]-tick[1];
       tick[0] = tick[1] = tick[2] = 0;
-      if (delta01 <= delta21 && delta21 <= 0) {
-        floatRes += (0  - floatRes) / 2;
-        Serial.println(floatRes);
-        delay(1000);
-        continue;
-      }
-      if (delta21 <= delta01 && delta01 <= 0) {
-        floatRes += (180  - floatRes) / 2;
-        Serial.println(floatRes);
-        delay(1000);
-        continue;
-      }
+      digitalWrite(Led, LOW);
+      // if (delta01 <= delta21 && delta21 <= 0) {
+      //   floatRes = (0 - delta01/delta21 - floatRes*0) / 1;
+      //   Serial.println(floatRes);
+      //   break;
+      // }
+      // if (delta21 <= delta01 && delta01 <= 0) {
+      //   floatRes = (180   - floatRes*0) / 1;
+      //   Serial.println(floatRes);
+      //   break;
+      // }
+      float floatRes = 0;
       if (delta01 >= delta21 && delta21 >= 0) {
         float q = (float) (delta21) / delta01;
-        floatRes += (135 - 45 * q  - floatRes) / 2;
+        floatRes = (135 - 45 * q  );
         Serial.println(floatRes);
-        continue;
+        break;
       }
       if (delta21 >= delta01 && delta01 >= 0) {
         float q = (float) (delta01) / delta21;
-        floatRes += (45 + 45 * q  - floatRes) / 2;
+        floatRes = (45 + 45 * q  );
         Serial.println(floatRes);
-        continue;
+        break;
       }
       if (delta01 >= 0 && delta21 <= 0) {
         float q = (float) (-delta21) / (delta01 - delta21);
-        floatRes += (135 + 45 * q  - floatRes) / 2;
+        floatRes = (135 + 45 * q  );
         Serial.println(floatRes);
-        continue;
+        break;
       }
       if (delta21 >= 0 && delta01 <= 0) {
         float q = (float) (-delta01) / (delta21 - delta01);
-        floatRes += (45 * (1 - q)  - floatRes) / 2;
+        floatRes = (45 * (1 - q) );
         Serial.println(floatRes);
-        continue;
+        break;
       }
+      break;
     }
   }
-  delay(1000);
+  delay(100);
 }

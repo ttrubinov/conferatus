@@ -11,5 +11,5 @@ class Presenter:
         self.motion_service.update_value(angle)
         if self.motion_service.should_rotate():
             new_angle = self.motion_service.get_rotation_angle()
-            print("Result angle: ", new_angle)
+            # print("Result angle: ", new_angle)
             self.motion_controller.move(new_angle)
