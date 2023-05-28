@@ -3,13 +3,33 @@ from ML.core.ModelPredict import ModelPredict
 from Maths.Fourier import Fourier
 from Presenter.Presenter import Presenter
 
-dir_path = "2405"
-prefix = "Prikol2"
+dir_path = "2128"
+prefix = "maybe"
 port_micro = "COM4"
-port_servo = "COM6"
+port_servo = "COM7"
 data_size = 250
+def anotherParasha():
+    presenter = Presenter(port=port_servo)
+    res = 90
+    arr = [90]*3
+    with ArduinoController(1, port=port_micro, data_size=data_size, baud_rate=19200) as micro_listener:
+        while True:
+            rd = micro_listener.record_angle()
+            if rd is None:
+                continue
+            # rd = 180-rd
+            arr.pop(0)
+            arr.append(rd)
+            print(f"Angle: {sorted(arr)[1]}, of {sorted(arr)} in {arr}")
+            presenter.rotation(sorted(arr)[1])
+            # if rd-res > 50:
+            #     res += (res-rd)/4
+            # else:
+            #     res += (res-rd)/2
 
-if __name__ == '__main__':
+    pass
+
+def main():
     model_predict = ModelPredict.download(dir_path, prefix)
     presenter = Presenter(port=port_servo)
     while True:
@@ -25,3 +45,6 @@ if __name__ == '__main__':
             print("Neuro angle: ", res_angle)
 
             presenter.rotation(res_angle)
+if __name__ == '__main__':
+    # main()
+    anotherParasha()

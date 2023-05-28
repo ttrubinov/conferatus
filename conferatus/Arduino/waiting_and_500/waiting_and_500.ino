@@ -74,7 +74,7 @@ void loop() {
         running = true;
       }
       if (str[0] == 'c'){
-        // digitalWrite(Led, HIGH);
+        //digitalWrite(Led, HIGH);
         running = true;
       }
       if (str[0] == 's'){
