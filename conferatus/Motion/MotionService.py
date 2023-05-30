@@ -15,4 +15,9 @@ class MotionService:
         return True
 
     def get_rotation_angle(self) -> int:
-        return round(self.__get_value())
+        if self.__get_value() < 30:
+            return 30
+        elif self.__get_value() > 150:
+            return 150
+        else:
+            return round(self.__get_value())

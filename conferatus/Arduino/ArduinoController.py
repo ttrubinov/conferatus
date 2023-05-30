@@ -39,7 +39,7 @@ class ArduinoController:
 
             while not ("S" in (a := ser.readline().decode())):
                 print(a)
-                time.sleep(1)
+                time.sleep(0.1)
                 ser.write(b'c')
                 print("Waiting")
             for j in range(self.data_size):

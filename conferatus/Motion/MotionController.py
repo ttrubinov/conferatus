@@ -10,5 +10,5 @@ class MotionController:
 
     def move(self, angle: int) -> None:
         self.ser.write((180 - angle).to_bytes(1, 'little'))
-        time.sleep(1)
+        time.sleep(0.1)
 
