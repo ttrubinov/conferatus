@@ -7,8 +7,8 @@ void setup() {
     Serial.begin(230400);
 //    servo.attach(2, 1000, 2000);        // привод на d2
     servo.attach(2);
-    servo.setSpeed(120);
-    servo.setAccel(0.2);
+    servo.setSpeed(40);
+    servo.setAccel(0.8);
 
     servo.setTargetDeg(90);
 }
