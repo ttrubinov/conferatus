@@ -137,17 +137,6 @@ class ModelLearning:
 
 
 if __name__ == '__main__':
-    model = ModelLearning(sample_size=2, mic_amount=2)
-    model.fit(
-        [Sample([[0.7, 0.6], [0.6, 0.7]], 90, person="Misha"), Sample([[0.3, 0.4], [0.4, 0.3]], 90, frequency=800),
-         Sample([[0, 0.1], [0.1, 0]], bad_data=True), Sample([[0.9, 0.9], [0.9, 0.9]], 90, person="Misha")],
-        default_epochs=500)
-    comp_model = model.compile()
-    comp_model.save()
-    another = ModelPredict.download()
-    # another = model.compile()
-    print(another.predict_all([[0, 0], [0, 0]]))
-    print(another.predict_all([[0.3, 0.4], [0.4, 0.3]]))
-    print(another.predict_all([[0.7, 0.6], [0.6, 0.7]]))
-    print(another.predict_all([[0.9, 0.9], [0.9, 0.9]]))
+    model = ModelLearning(sample_size=100, mic_amount=3)
+    tf.keras.utils.plot_model(model.model_classification, to_file="md.png")
     pass

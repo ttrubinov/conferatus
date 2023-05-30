@@ -100,11 +100,11 @@ class Dataset:
 
 
 if __name__ == '__main__':
-    ampl, phases = Fourier.get_amplitudes_and_phases(Dataset.get_samples("2128_2_real.json").pop(2).signals,
+    ampl, phases = Fourier.get_amplitudes_and_phases(Dataset.get_samples("2128_2_cholopok_real.json").pop(17).signals,
                                                      should_calculate_phases=True)
-    Plotter.draw(ampl, color=["r", "g", "b"], file_path="hui1.png", x_label="frequency",
-                 y_label="amplitude", name="Amplitude response", legend=["left Mic", "middle Mic", "right Mic"])
-    Plotter.draw(phases, color=["r", "g", "b"], file_path="hui2.png",
+    Plotter.draw(ampl, color=["r", "b", "g"], file_path="hui1.png", x_label="frequency",
+                 y_label="amplitude", name="Amplitude response", legend=["mic1", "mic2", "mic3"])
+    Plotter.draw(phases, color=["r", "b", "g"], file_path="hui2.png",
                  x_label="frequency", y_label="phase", name="Phases response",
-                 legend=["left Mic", "middle Mic", "right Mic"])
+                 legend=["right Mic", "middle Mic", "left Mic"])
     print()
