@@ -9,26 +9,39 @@ port_micro = "/dev/ttyUSB0"
 port_servo = "/dev/ttyUSB1"
 data_size = 250
 
+
+def addToMediana(lst: list, val):
+    i = 0
+    while i < 3:
+        if val > lst[i]:
+            break
+        i += 1
+    lst.insert(i, val)
+    if i < 2:
+        lst.pop()
+    else:
+        lst.pop(0)
+
+
 def diff():
     presenter = Presenter(port=port_servo)
-    res = 90
-    arr = [90]*3
+    arr = [90] * 3
     with ArduinoController(1, port=port_micro, data_size=data_size, baud_rate=19200) as micro_listener:
         while True:
             rd = micro_listener.record_angle()
             if rd is None:
                 continue
             # rd = 180-rd
-            arr.pop(0)
-            arr.append(rd)
-            print(f"Angle: {sorted(arr)[1]}, of {sorted(arr)} in {arr}")
-            presenter.rotation(sorted(arr)[1])
+            addToMediana(arr, rd)
+            print(f"Angle: {arr[1]}, of {arr} in {arr}")
+            presenter.rotation(arr[1])
             # if rd-res > 50:
             #     res += (res-rd)/4
             # else:
             #     res += (res-rd)/2
 
     pass
+
 
 def neuro():
     model_predict = ModelPredict.download(dir_path, prefix)
@@ -47,7 +60,9 @@ def neuro():
 
             presenter.rotation(res_angle)
 
+
 import sys
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('asdilfj')
@@ -59,4 +74,3 @@ if __name__ == '__main__':
             diff()
         case _:
             raise 'нет такого'
-
