@@ -5,10 +5,11 @@ from Presenter.Presenter import Presenter
 
 dir_path = "2128"
 prefix = "maybe"
-port_micro = "COM4"
-port_servo = "COM7"
+port_micro = "/dev/ttyUSB0"
+port_servo = "/dev/ttyUSB1"
 data_size = 250
-def anotherParasha():
+
+def diff():
     presenter = Presenter(port=port_servo)
     res = 90
     arr = [90]*3
@@ -29,7 +30,7 @@ def anotherParasha():
 
     pass
 
-def main():
+def neuro():
     model_predict = ModelPredict.download(dir_path, prefix)
     presenter = Presenter(port=port_servo)
     while True:
@@ -45,6 +46,17 @@ def main():
             print("Neuro angle: ", res_angle)
 
             presenter.rotation(res_angle)
+
+import sys
 if __name__ == '__main__':
-    # main()
-    anotherParasha()
+    if len(sys.argv) == 1:
+        print('asdilfj')
+        raise 'где аргументы лебовски'
+    match sys.argv[1]:
+        case '--neuro':
+            neuro()
+        case '--diff':
+            diff()
+        case _:
+            raise 'нет такого'
+
